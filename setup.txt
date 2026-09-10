@@ -68,3 +68,7 @@ CREATE TABLE purchase_orders (
 -- Insert default admin user (password: admin123)
 INSERT INTO users (username, password_hash, role)
 VALUES ('admin', '$2a$10$N9qo8uLOickgx2ZMRZoMy.MrTZ4rB1lPBhRw5c5EwJk8Xq4G4G4G4', 'admin');
+
+
+Delete row
+DELETE FROM purchase_orders;
