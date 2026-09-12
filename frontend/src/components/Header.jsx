@@ -43,7 +43,7 @@ const Header = () => {
                 <button onClick={logout} className="text-red-600 font-semibold hover:underline">Logout</button>
               </>
             ) : (
-              <Link to="/login" className="hover:text-blue-600 flex ">Login</Link>
+              <Link to="/login" className="hover:text-blue-600 flex  text-2xl text-red-500">Login</Link>
             )}
             {/* <span className="text-gray-300">|</span> */}
             {/* <span className="hover:text-blue-600 cursor-pointer">हिंदी</span> */}
