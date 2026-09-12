@@ -4,6 +4,6 @@ import { authenticate } from '../middleware/auth.js';
 
 const router = express.Router();
 
-router.get('/enq-type', authenticate, getEnqTypeStats);
+router.get('/enq-type',  getEnqTypeStats);
 
 export default router;

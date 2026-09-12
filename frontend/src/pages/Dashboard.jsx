@@ -1,8 +1,11 @@
 import { useEffect, useState, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import { poApi } from '../api/poApi';
 import PieChart from '../components/PieChart';
+import { useAuth } from '../context/AuthContext';
 
 const Dashboard = () => {
+  const { user } = useAuth(); // Check if user is logged in
   const [pos, setPos] = useState([]);
   const [enqStats, setEnqStats] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -15,12 +18,12 @@ const Dashboard = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        // Fetch POs (with pagination and search)
+        // Fetch POs (Publicly accessible now)
         const poRes = await poApi.getAll({ page, limit, search });
         setPos(poRes.data.data);
         setTotal(poRes.data.total);
 
-        // Fetch Enq Type stats (only once)
+        // Fetch Enq Type stats (Publicly accessible now)
         if (enqStats.length === 0) {
           const statsRes = await poApi.getEnqTypeStats();
           setEnqStats(statsRes.data);
@@ -34,8 +37,6 @@ const Dashboard = () => {
     fetchData();
   }, [page, search]);
 
-  // Calculate Ord. Plant stats dynamically from the fetched POs
-  // Note: In a real large-scale app, this should come from a backend endpoint.
   const ordPlantData = useMemo(() => {
     const counts = {};
     pos.forEach(po => {
@@ -54,8 +55,18 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
-      <h1 className="text-2xl font-bold text-gray-800 mb-6">Dashboard Overview</h1>
+    <div className="max-w-7xl mx-auto px-4 py-6">
+      {/* Welcome Banner for Admins */}
+      {user && (
+        <div className="bg-blue-50 border border-blue-200 text-blue-800 px-4 py-3 rounded-lg mb-6 flex justify-between items-center">
+          <span className="font-medium">Welcome, Admin! You have full access.</span>
+          <Link to="/upload" className="bg-blue-600 text-white px-4 py-1.5 rounded text-sm hover:bg-blue-700 transition">
+            Upload Excel File
+          </Link>
+        </div>
+      )}
+
+      <h1 className="text-2xl font-bold text-gray-800 mb-6">Public Dashboard Overview</h1>
 
       {/* Charts Section */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
@@ -74,7 +85,7 @@ const Dashboard = () => {
       {/* Data Table Section */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
         <div className="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
-          <h2 className="text-lg font-semibold text-gray-700">Purchase Orders</h2>
+          <h2 className="text-lg font-semibold text-gray-700">Search Purchase Orders</h2>
           <input
             type="text"
             placeholder="Search PO, Agency, Work..."

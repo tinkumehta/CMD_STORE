@@ -10,6 +10,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const token = localStorage.getItem('token');
     const role = localStorage.getItem('role');
+    // If no token exists, user remains null, but the app will still render.
     if (token) setUser({ token, role });
     setLoading(false);
   }, []);
