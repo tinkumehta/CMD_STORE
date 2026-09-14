@@ -48,7 +48,7 @@ const PieChart = ({ title, labels, data, colors, onClick }) => {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      legend: { position: 'right' }, // Right side to give more space
+      legend: { position: 'right' },
       title: { display: false },
       tooltip: {
         callbacks: {

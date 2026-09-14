@@ -85,7 +85,7 @@ const Header = () => {
       <nav className="bg-blue-800 text-white text-sm">
         <div className="max-w-7xl mx-auto px-4 flex flex-wrap">
           {['Home', 'About Us', 'Directory', 'Departments', 'Corporate Links',  'Circulars & Guidelines', 'DOP', 'DSR', 'GCC', 'Manuals & Standards'].map((item) => (
-            <Link key={item} to="#" className="px-3 py-2.5 hover:bg-blue-900 transition-colors whitespace-nowrap text-xl ">
+            <Link key={item} to="/" className="px-3 py-2.5 hover:bg-blue-900 transition-colors whitespace-nowrap text-xl ">
               {item}
             </Link>
           ))}
