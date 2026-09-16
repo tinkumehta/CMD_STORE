@@ -11,6 +11,14 @@ export const poApi = {
     return axiosClient.get('/stats/enq-type');
   },
 
+  // Add to poApi object
+updatePO: async (id, data) => {
+  return axiosClient.put(`/admin/purchase-orders/${id}`, data);
+},
+deletePO: async (id) => {
+  return axiosClient.delete(`/admin/purchase-orders/${id}`);
+},
+
   // Matches your backend: POST /api/admin/upload
   uploadExcel: async (file) => {
     const formData = new FormData();

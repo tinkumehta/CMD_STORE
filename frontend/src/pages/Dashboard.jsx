@@ -5,8 +5,9 @@ import PieChart from '../components/PieChart';
 import { useAuth } from '../context/AuthContext';
 import LeftSidebar from '../components/LeftSidebar';
 import RightSidebar from '../components/RightSidebar';
+import EditPOModal from '../components/EditPOModal'; // NEW IMPORT
 
-// Helper to group plant codes based on user requirements
+// Helper to group plant codes
 const getPlantGroup = (code) => {
   const c = String(code || '').trim();
   if (c === '1079' || c === '2401') return 'CBCMP';
@@ -17,35 +18,37 @@ const getPlantGroup = (code) => {
 const Dashboard = () => {
   const { user } = useAuth();
   
-  // State for full data and drill-down
   const [allPos, setAllPos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const limit = 10;
 
-  // Drill-down states (4 Levels)
   const [selectedPlantGroup, setSelectedPlantGroup] = useState(null); 
   const [selectedPlant, setSelectedPlant] = useState(null);           
   const [selectedEnqType, setSelectedEnqType] = useState(null);       
 
-  // Fetch ALL data once for charting and local filtering
+  // NEW: States for Edit/Delete
+  const [editingPO, setEditingPO] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(null);
+
+  // Refactored fetchData so it can be reused
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const poRes = await poApi.getAll({ limit: 5000 }); 
+      setAllPos(poRes.data.data);
+    } catch (err) {
+      console.error("Error fetching data", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const poRes = await poApi.getAll({ limit: 5000 }); 
-        setAllPos(poRes.data.data);
-      } catch (err) {
-        console.error("Error fetching data", err);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchData();
   }, []);
 
-  // Reset drill-down when search changes
   useEffect(() => {
     setSelectedPlantGroup(null);
     setSelectedPlant(null);
@@ -53,7 +56,28 @@ const Dashboard = () => {
     setPage(1);
   }, [search]);
 
-  // Base filtered data (only applies search)
+  // NEW: Handle Delete Action
+  const handleDelete = async (id, poNo) => {
+    if (window.confirm(`Are you sure you want to permanently delete PO: ${poNo}?`)) {
+      setIsDeleting(id);
+      try {
+        await poApi.deletePO(id);
+        await fetchData(); // Refresh table
+      } catch (err) {
+        alert("Failed to delete PO: " + (err.response?.data?.error || err.message));
+      } finally {
+        setIsDeleting(null);
+      }
+    }
+  };
+
+  // NEW: Handle Save from Modal
+  const handleSaveEdit = async () => {
+    setEditingPO(null);
+    await fetchData(); // Refresh table
+  };
+
+  // --- Filtering Logic (Same as before) ---
   const searchFilteredData = useMemo(() => {
     return allPos.filter(po => {
       const searchLower = search.toLowerCase();
@@ -64,7 +88,6 @@ const Dashboard = () => {
     });
   }, [allPos, search]);
 
-  // Level 1: Plant Group Data (CBCMP, KDCMP)
   const plantGroupData = useMemo(() => {
     const counts = {};
     searchFilteredData.forEach(po => {
@@ -76,7 +99,6 @@ const Dashboard = () => {
     return { labels: Object.keys(counts), data: Object.values(counts) };
   }, [searchFilteredData]);
 
-  // Level 2: Specific Plant Codes within selected Group
   const specificPlantData = useMemo(() => {
     if (!selectedPlantGroup) return { labels: [], data: [] };
     const counts = {};
@@ -91,7 +113,6 @@ const Dashboard = () => {
     return { labels: Object.keys(counts), data: Object.values(counts) };
   }, [searchFilteredData, selectedPlantGroup]);
 
-  // Level 3: Enq Type Data for selected specific Plant Code
   const enqTypeData = useMemo(() => {
     if (!selectedPlant) return { labels: [], data: [] };
     const counts = {};
@@ -106,7 +127,6 @@ const Dashboard = () => {
     return { labels: Object.keys(counts), data: Object.values(counts) };
   }, [searchFilteredData, selectedPlant]);
 
-  // Level 4: Table Data
   const tableData = useMemo(() => {
     return searchFilteredData.filter(po => {
       const matchesGroup = !selectedPlantGroup || getPlantGroup(po.ord_plant) === selectedPlantGroup;
@@ -129,19 +149,13 @@ const Dashboard = () => {
   return (
     <div className="max-w-[1600px] mx-auto px-4 py-6 flex flex-col lg:flex-row gap-6">
       
-      {/* 1. LEFT SIDEBAR (Apps Grid) */}
       <LeftSidebar />
 
-      {/* 2. MIDDLE SECTION (Dashboard Charts & Table) */}
       <div className="flex-1 min-w-0">
         
         {user && (
-          <div className="bg-blue-50 border border-blue-200 text-blue-800 px-4 py-3 rounded-lg mb-6 flex justify-between items-center">
-            <span className="font-medium">Welcome, Admin! You have full access.</span>
-            <Link to="/upload" className="bg-blue-600 text-white px-4 py-1.5 rounded text-sm hover:bg-blue-700 transition">
-              Upload Excel File
-            </Link>
-          </div>
+            <></>
+          
         )}
 
         <div className="flex justify-between items-center mb-6">
@@ -162,7 +176,6 @@ const Dashboard = () => {
           )}
         </div>
 
-        {/* Charts Section */}
         <div className="grid grid-cols-1 gap-6 mb-8">
           {!selectedPlantGroup && (
             <PieChart 
@@ -196,7 +209,7 @@ const Dashboard = () => {
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
           <div className="p-4 border-b border-gray-100 flex flex-col sm:flex-row justify-between items-center gap-4 bg-gray-50">
             <h2 className="text-lg font-semibold text-gray-700">
-              {selectedEnqType ? `${selectedEnqType} Purchase Orders` : 'Purchase Orders'}
+              {selectedEnqType ? `${selectedEnqType} Purchase Orders` : 'Live Purchase Orders'}
             </h2>
             <input
               type="text"
@@ -206,6 +219,7 @@ const Dashboard = () => {
               className="px-4 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none w-full sm:w-64"
             />
           </div>
+          
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm text-gray-600">
               <thead className="bg-gray-50 text-gray-700 uppercase text-xs">
@@ -216,13 +230,17 @@ const Dashboard = () => {
                   <th className="px-6 py-3">Value (INR)</th>
                   <th className="px-6 py-3">Enq Type</th>
                   <th className="px-6 py-3">Ord. Plant</th>
+                  {/* NEW: Actions Header */}
+                  {user?.role === 'admin' && (
+                    <th className="px-6 py-3 text-right">Actions</th>
+                  )}
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {loading ? (
-                  <tr><td colSpan="6" className="text-center py-10">Loading data...</td></tr>
+                  <tr><td colSpan={user?.role === 'admin' ? 7 : 6} className="text-center py-10">Loading data...</td></tr>
                 ) : paginatedData.length === 0 ? (
-                  <tr><td colSpan="6" className="text-center py-10">No records found.</td></tr>
+                  <tr><td colSpan={user?.role === 'admin' ? 7 : 6} className="text-center py-10">No records found.</td></tr>
                 ) : (
                   paginatedData.map((po) => (
                     <tr key={po.id} className="hover:bg-gray-50 transition">
@@ -236,6 +254,25 @@ const Dashboard = () => {
                         </span>
                       </td>
                       <td className="px-6 py-4">{po.ord_plant}</td>
+                      
+                      {/* NEW: Actions Data */}
+                      {user?.role === 'admin' && (
+                        <td className="px-6 py-4 text-right flex justify-end gap-3">
+                          <button 
+                            onClick={() => setEditingPO(po)}
+                            className="text-blue-600 hover:text-blue-800 font-medium text-xs transition-colors"
+                          >
+                            Edit
+                          </button>
+                          <button 
+                            onClick={() => handleDelete(po.id, po.po_no)}
+                            disabled={isDeleting === po.id}
+                            className="text-red-600 hover:text-red-800 font-medium text-xs transition-colors disabled:opacity-50"
+                          >
+                            {isDeleting === po.id ? 'Deleting...' : 'Delete'}
+                          </button>
+                        </td>
+                      )}
                     </tr>
                   ))
                 )}
@@ -270,8 +307,16 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* 3. RIGHT SIDEBAR (Profile Card) */}
       <RightSidebar />
+
+      {/* NEW: Render Edit Modal when editingPO is not null */}
+      {editingPO && (
+        <EditPOModal 
+          po={editingPO} 
+          onClose={() => setEditingPO(null)} 
+          onSave={handleSaveEdit} 
+        />
+      )}
       
     </div>
   );

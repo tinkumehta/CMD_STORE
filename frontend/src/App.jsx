@@ -14,8 +14,8 @@ const Layout = () => {
       <main className="flex-1">
         <Outlet />
       </main>
-      <footer className="bg-gray-800 text-white text-center py-4 text-sm mt-auto">
-        &copy; {new Date().getFullYear()} NTPC USSC Raipur. All rights reserved.
+      <footer className="bg-[#86a7f0] text-blue text-center py-3 text-[20px]">
+        &copy; {new Date().getFullYear()} NTPC C&M SIKRI. All rights reserved.
       </footer>
     </div>
   );
