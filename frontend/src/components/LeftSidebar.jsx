@@ -54,6 +54,7 @@ const apps = [
    { name: 'Govt. e-Marketplace', icon: icons.cart, color: 'text-orange-600', bg: 'bg-orange-50', url: 'https://gem.gov.in/' },
   { name: 'GePNIC Portal', icon: icons.building, color: 'text-purple-600', bg: 'bg-purple-50', url: 'https://eprocurentpc.nic.in/nicgep/app' },
   { name: ' USSC Dashboard', icon: icons.dashboard, color: 'text-blue-600', bg: 'bg-blue-50', url: 'http://10.4.8.75/English/Default.aspx' },
+  { name: ' VDC', icon: icons.dashboard, color: 'text-blue-600', bg: 'bg-blue-50', url: 'https://vdc.ntpc.co.in/' },
   { name: 'E-String', icon: icons.users, color: 'text-emerald-600', bg: 'bg-emerald-50', url: 'https://mcode.ntpc.co.in:8082/' },
  
 ];

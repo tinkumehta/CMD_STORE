@@ -5,14 +5,6 @@ import prashantImg from '../../public/prashant.jpeg';
 // Array of profiles to rotate through
 const profiles = [
   {
-    name: 'DHANANJAY SHRIKHANDE',
-    title: 'HOP CBCMP',
-    image: hop,
-    accent: '#4338ca', // indigo-700
-    accentSoft: '#eef2ff',
-    gradient: 'from-indigo-600 to-blue-600',
-  },
-  {
     name: 'PRASHANT KUMAR GUPTA',
     title: 'ADDL. GENERAL MANAGER',
     image: prashantImg,
@@ -20,6 +12,15 @@ const profiles = [
     accentSoft: '#00FFFF',
     gradient: 'from-emerald-600 to-teal-600',
   },
+  {
+    name: 'DHANANJAY SHRIKHANDE',
+    title: 'HOP CBCMP',
+    image: hop,
+    accent: '#4338ca', // indigo-700
+    accentSoft: '#eef2ff',
+    gradient: 'from-indigo-600 to-blue-600',
+  },
+  
 ];
 
 const ROTATE_MS = 8000;
