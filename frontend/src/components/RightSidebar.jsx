@@ -6,7 +6,7 @@ import prashantImg from '../../public/prashant.jpeg';
 const profiles = [
   {
     name: 'PRASHANT KUMAR GUPTA',
-    title: 'ADDL. GENERAL MANAGER',
+    title: 'HOD C&M (CBCMP & KDCMP SHARED SERVICE)',
     image: prashantImg,
     accent: '#0f766e', // teal-700
     accentSoft: '#00FFFF',
@@ -20,7 +20,6 @@ const profiles = [
     accentSoft: '#eef2ff',
     gradient: 'from-indigo-600 to-blue-600',
   },
-  
 ];
 
 const ROTATE_MS = 8000;
@@ -126,16 +125,18 @@ const RightSidebar = () => {
             }`}
             style={{ transform: 'translateZ(30px)' }}
           >
+            {/* CHANGED: Name is now first */}
+            <h2 className="text-lg font-extrabold text-white tracking-tight leading-snug drop-shadow-sm mb-2">
+              {currentProfile.name}
+            </h2>
+
+            {/* CHANGED: Title is now second */}
             <span
-              className="inline-block mb-2 px-2.5 py-1 rounded-full text-[9px] font-bold uppercase tracking-widest backdrop-blur-md"
+              className="inline-block px-2.5 py-1 rounded-full text-[9px] font-bold uppercase tracking-widest backdrop-blur-md"
               style={{ color: '#fff', backgroundColor: `${currentProfile.accent}cc` }}
             >
               {currentProfile.title}
             </span>
-            <h2 className="text-lg font-extrabold text-white tracking-tight leading-snug drop-shadow-sm">
-              {currentProfile.name}
-            </h2>
-
           </div>
         </div>
 
@@ -144,8 +145,6 @@ const RightSidebar = () => {
           className="relative bg-white px-5 py-3.5 border-t border-gray-100 flex items-center justify-between"
           style={{ transform: 'translateZ(10px)' }}
         >
-
-
           <div className="flex gap-1.5">
             {profiles.map((_, idx) => (
               <button
