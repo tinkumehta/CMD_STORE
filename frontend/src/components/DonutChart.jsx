@@ -1,124 +1,93 @@
-import { Doughnut } from 'react-chartjs-2';
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import { useMemo } from 'react';
 
-ChartJS.register(ArcElement, Tooltip, Legend);
+// Original full colors
+const COLORS = ['#0b4bff', '#1fb5c0', '#0b3d91', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444'];
 
-// Custom plugin: draws "Total POs" + total number in the center
-const centerTextPlugin = {
-  id: 'centerText',
-  afterDraw(chart) {
-    const { ctx, chartArea } = chart;
-    if (!chartArea) return;
+function polarToCartesian(cx, cy, r, angle) {
+  const rad = (angle - 90) * Math.PI / 180;
+  return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
+}
 
-    const centerX = (chartArea.left + chartArea.right) / 2;
-    const centerY = (chartArea.top + chartArea.bottom) / 2;
-    const data = chart.data.datasets[0].data;
-    const total = data.reduce((a, b) => a + (Number(b) || 0), 0);
+function donutPath(cx, cy, innerR, outerR, startAngle, endAngle) {
+  const startOuter = polarToCartesian(cx, cy, outerR, endAngle);
+  const endOuter = polarToCartesian(cx, cy, outerR, startAngle);
+  const startInner = polarToCartesian(cx, cy, innerR, startAngle);
+  const endInner = polarToCartesian(cx, cy, innerR, endAngle);
+  const largeArc = endAngle - startAngle > 180 ? 1 : 0;
 
-    ctx.save();
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
+  return [
+    `M ${startOuter.x} ${startOuter.y}`,
+    `A ${outerR} ${outerR} 0 ${largeArc} 0 ${endOuter.x} ${endOuter.y}`,
+    `L ${startInner.x} ${startInner.y}`,
+    `A ${innerR} ${innerR} 0 ${largeArc} 1 ${endInner.x} ${endInner.y}`,
+    `Z`
+  ].join(' ');
+}
 
-    ctx.font = '600 11px Inter, system-ui, sans-serif';
-    ctx.fillStyle = '#64748b';
-    ctx.fillText('Total POs', centerX, centerY - 12);
+const DonutChart = ({ labels = [], data = [], onClick }) => {
+  const total = data.reduce((a, b) => a + b, 0);
 
-    ctx.font = 'bold 26px Inter, system-ui, sans-serif';
-    ctx.fillStyle = '#1e293b';
-    ctx.fillText(total.toString(), centerX, centerY + 14);
+  const segments = useMemo(() => {
+    let acc = 0;
+    return data.map((v, i) => {
+      const start = acc;
+      const angle = total ? (v / total) * 360 : 0;
+      acc += angle;
+      return {
+        value: v,
+        label: labels[i],
+        color: COLORS[i % COLORS.length],
+        startAngle: start,
+        endAngle: acc,
+      };
+    });
+  }, [data, labels, total]);
 
-    ctx.restore();
-  },
-};
-
-const DonutChart = ({ title, subtitle, labels = [], data = [], colors, onClick }) => {
-  const hasData = labels.length > 0 && data.length > 0 && data.some((v) => Number(v) > 0);
-  const total = data.reduce((a, b) => a + (Number(b) || 0), 0);
-
-  const palette = colors || ['#3B82F6', '#EF4444', '#10B981', '#F59E0B', '#6366F1', '#8B5CF6'];
-
-  const chartData = {
-    labels,
-    datasets: [{
-      data,
-      backgroundColor: palette,
-      borderWidth: 3,
-      borderColor: '#ffffff',
-      hoverOffset: 8,
-    }],
-  };
-
-  const options = {
-    responsive: true,
-    maintainAspectRatio: false,
-    cutout: '68%',
-    plugins: {
-      datalabels: { display: false },
-      legend: { display: false },
-      tooltip: {
-        backgroundColor: 'rgba(15, 23, 42, 0.96)',
-        padding: 10,
-        cornerRadius: 8,
-        callbacks: {
-          label: (ctx) => {
-            const value = Number(ctx.parsed) || 0;
-            const pct = total > 0 ? ((value / total) * 100).toFixed(1) : '0';
-            return `  ${ctx.label}: ${value} (${pct}%)`;
-          },
-        },
-      },
-    },
-    onClick: (e, elements) => {
-      if (elements.length > 0 && onClick) onClick(labels[elements[0].index]);
-    },
-  };
+  if (!labels.length) {
+    return <div className="p-6 text-center text-gray-400 text-sm">No data</div>;
+  }
 
   return (
-    <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex flex-col h-full">
-      {/* Header */}
-      <div className="flex items-center gap-2 mb-3">
-        <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center shrink-0">
-          <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+    <div className="w-full">
+      <div className="flex flex-col md:flex-row items-center justify-center gap-10 py-4">
+
+        {/* Clickable Donut - SVG */}
+        <div className="relative w-[240px] h-[240px] shrink-0">
+          <svg width="240" height="240" viewBox="0 0 240 240" className="w-full h-full">
+            {segments.map((seg, i) => (
+              <path
+                key={i}
+                d={donutPath(120, 120, 75, 110, seg.startAngle, seg.endAngle)}
+                fill={seg.color}
+                className="cursor-pointer hover:opacity-80 transition-all duration-200 hover:brightness-110"
+                onClick={() => onClick?.(seg.label)}
+                style={{ cursor: 'pointer' }}
+              >
+                <title>{seg.label}: {seg.value}</title>
+              </path>
+            ))}
           </svg>
-        </div>
-        <div className="min-w-0">
-          <h3 className="text-sm font-bold text-gray-800 truncate">{title}</h3>
-          <p className="text-[10px] text-gray-400 truncate">{subtitle}</p>
-        </div>
-      </div>
 
-      {/* Chart + Legend */}
-      <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-3 items-center min-h-[200px]">
-        <div className="relative h-44">
-          {hasData ? (
-            <Doughnut
-              key={`${labels.join('-')}-${data.join('-')}`}
-              data={chartData}
-              options={options}
-              plugins={[centerTextPlugin]}
-            />
-          ) : (
-            <div className="flex items-center justify-center h-full text-xs text-gray-400">No data</div>
-          )}
+          {/* Center - Total POs - Non clickable */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120px] h-[120px] bg-white rounded-full flex flex-col items-center justify-center pointer-events-none">
+            <span className="text-[14px] font-semibold text-[#4a6fa5]">Total POs</span>
+            <span className="text-[48px] font-extrabold text-[#0f1e3d] leading-none mt-1">{total}</span>
+          </div>
         </div>
 
-        <div className="space-y-3">
-          {labels.map((label, idx) => {
-            const pct = total > 0 ? ((data[idx] / total) * 100).toFixed(1) : '0.0';
-            return (
-              <div key={label} className="flex items-center justify-between text-xs">
-                <div className="flex items-center gap-2 min-w-0">
-                  <span className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: palette[idx % palette.length] }} />
-                  <span className="font-semibold text-gray-700 truncate">{label}</span>
-                </div>
-                <div className="flex items-center gap-2 shrink-0">
-                  <span className="font-bold text-gray-800">{data[idx]}</span>
-                  <span className="text-gray-400 text-[10px] w-10 text-right">{pct}%</span>
-                </div>
-              </div>
-            );
-          })}
+        {/* Legend bhi clickable */}
+        <div className="flex flex-col gap-2.5">
+          {segments.map((seg, i) => (
+            <div
+              key={i}
+              onClick={() => onClick?.(seg.label)}
+              className="flex items-center gap-3 px-4 py-2.5 bg-gray-50 hover:bg-white border border-gray-100 hover:shadow-md rounded-xl cursor-pointer transition-all"
+            >
+              <span className="w-3.5 h-3.5 rounded-full" style={{ background: seg.color }}></span>
+              <span className="text-[13px] font-bold text-gray-700">{seg.label}</span>
+              <span className="text-[13px] font-bold ml-auto">{seg.value}</span>
+            </div>
+          ))}
         </div>
       </div>
     </div>
