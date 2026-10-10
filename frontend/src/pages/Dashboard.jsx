@@ -1,6 +1,6 @@
 // src/pages/Dashboard.jsx
 import { useEffect, useState, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { poApi } from '../api/poApi';
 import DonutChart from '../components/DonutChart';
 import PoTimeAnalysis from '../components/PoTimeAnalysis';
@@ -9,8 +9,8 @@ import OperationalInsights from '../components/OperationalInsights';
 import { useAuth } from '../context/AuthContext';
 import EditPOModal from '../components/EditPOModal';
 // import WelcomeBanner from '../components/WelcomeBanner';
-import CalendarWidget from '../components/CalendarWidget';
-import RecentActivity from '../components/RecentActivity';
+// import CalendarWidget from '../components/CalendarWidget';
+// import RecentActivity from '../components/RecentActivity';
 import Topbar from '../components/Topbar';
 
 // ------------------------------------------------------------
@@ -53,7 +53,8 @@ const formatCurrency = (n) => {
 // Main Dashboard
 // ------------------------------------------------------------
 const Dashboard = () => {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
 
   const [allPos, setAllPos] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -229,7 +230,7 @@ const Dashboard = () => {
   // RENDER
   // ------------------------------------------------------------
   return (
-    <div className="min-h-screen bg-[#eef2ff]">
+    <div className="min-h-screen bg-[#f5f7fb]">
       <div className="max-w-[1600px] mx-auto px-4 py-5">
 
         {/* ===================== TOPBAR ===================== */}
@@ -237,10 +238,38 @@ const Dashboard = () => {
           <Topbar />
         </div>
 
-        {/* ===================== WELCOME BANNER ===================== */}
-        {/* <div className="mb-5">
-          <WelcomeBanner />
-        </div> */}
+        {/* ===================== LOGIN / LOGOUT BUTTON ===================== */}
+        <div className="mb-5 flex justify-end">
+          {user ? (
+            <button
+              onClick={() => {
+                if (window.confirm('Logout karna hai?')) {
+                  logout();
+                  navigate('/login');
+                }
+              }}
+              className="group inline-flex items-center gap-2 bg-gradient-to-r from-red-600 to-rose-600 hover:from-rose-600 hover:to-red-600 text-white px-5 py-2.5 rounded-xl shadow-md hover:shadow-lg transition-all duration-300"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+              </svg>
+              <span className="text-sm font-bold">Logout</span>
+            </button>
+          ) : (
+            <Link
+              to="/login"
+              className="group inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-indigo-600 hover:to-blue-600 text-white px-5 py-2.5 rounded-xl shadow-md hover:shadow-lg transition-all duration-300"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+              </svg>
+              <span className="text-sm font-bold">Login</span>
+              <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </Link>
+          )}
+        </div>
 
         {/* ===================== BREADCRUMB + DATE ===================== */}
         {/* <div className="flex flex-wrap justify-between items-center gap-3 mb-5">
@@ -283,7 +312,7 @@ const Dashboard = () => {
             tone="green"
             sparkData={[5, 6, 6, 7, 6, 8, 9]}
           />
-          <KpiCard
+          {/* <KpiCard
             icon={<span>🔔</span>}
             title="Pending / Attention Required"
             value={kpis.pending.toString()}
@@ -291,7 +320,7 @@ const Dashboard = () => {
             subtitle="vs. last week"
             tone="orange"
             sparkData={[2, 3, 4, 3, 5, 6, 7]}
-          />
+          /> */}
         </div>
 
         {/* ===================== CHART + INSIGHTS ===================== */}
@@ -346,178 +375,174 @@ const Dashboard = () => {
           />
         </div>
 
-        {/* ===================== TABLE + RIGHT WIDGETS ===================== */}
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-5 mb-5">
-
-          {/* ---------- TABLE (2 columns) ---------- */}
-          <div className="xl:col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-            <div className="p-4 border-b border-gray-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
-              <h2 className="text-sm font-bold text-gray-800 flex items-center gap-2">
-                <span className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center">≡</span>
-                Live Purchase Orders • Total {total} POs
-              </h2>
-              <div className="flex items-center gap-2 w-full md:w-auto">
-                <div className="relative flex-1 md:flex-none">
-                  <input
-                    type="text"
-                    placeholder="Search PO No, Agency..."
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    className="pl-8 pr-3 py-2 text-xs border border-gray-200 rounded-full focus:ring-2 focus:ring-blue-500 outline-none w-full md:w-64 bg-gray-50 focus:bg-white"
-                  />
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">🔍</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs min-w-[900px]">
-                <thead className="bg-gray-50 text-gray-500 uppercase text-[10px] tracking-wider">
-                  <tr>
-                    <th className="px-4 py-3 font-semibold">PO No</th>
-                    <th className="px-4 py-3 font-semibold">Creator</th>
-                    <th className="px-4 py-3 font-semibold">Agency</th>
-                    <th className="px-4 py-3 font-semibold text-right">Value (INR)</th>
-                    <th className="px-4 py-3 font-semibold text-center">Enquiry Type</th>
-                    <th className="px-4 py-3 font-semibold text-center">Order Plant</th>
-                    <th className="px-4 py-3 font-semibold">Created</th>
-                    <th className="px-4 py-3 font-semibold text-center">Status</th>
-                    {user?.role === 'admin' && (
-                      <th className="px-4 py-3 font-semibold text-right">Actions</th>
-                    )}
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-100">
-                  {loading ? (
-                    <tr>
-                      <td colSpan={9} className="text-center py-12 text-gray-400">
-                        Loading...
-                      </td>
-                    </tr>
-                  ) : paginatedData.length === 0 ? (
-                    <tr>
-                      <td colSpan={9} className="text-center py-12 text-gray-400">
-                        No records
-                      </td>
-                    </tr>
-                  ) : (
-                    paginatedData.map((po) => {
-                      const status = deriveStatus(po);
-                      return (
-                        <tr key={po.id} className="hover:bg-blue-50/40 transition">
-                          <td className="px-4 py-3 font-bold text-[#0b3d91] font-mono text-[11px]">
-                            {po.po_no}
-                          </td>
-                          <td className="px-4 py-3 text-gray-700 truncate max-w-[140px]">
-                            {po.creator_name}
-                          </td>
-                          <td className="px-4 py-3 text-gray-700 truncate max-w-[180px]">
-                            {po.agency}
-                          </td>
-                          <td className="px-4 py-3 text-right font-semibold">
-                            {formatCurrency(po.value_inr)}
-                          </td>
-                          <td className="px-4 py-3 text-center">
-                            <span className="px-2 py-1 bg-blue-50 text-blue-700 rounded-full text-[10px] font-bold border border-blue-100">
-                              {po.enq_type || '—'}
-                            </span>
-                          </td>
-                          <td className="px-4 py-3 text-center font-semibold">
-                            {po.ord_plant || '—'}
-                          </td>
-                          <td className="px-4 py-3 text-gray-500 whitespace-nowrap">
-                            {formatDate(po.date)}
-                          </td>
-                          <td className="px-4 py-3 text-center">
-                            <span
-                              className={`px-2 py-1 rounded-full text-[10px] font-bold border ${statusStyles[status]}`}
-                            >
-                              {status}
-                            </span>
-                          </td>
-                          {user?.role === 'admin' && (
-                            <td className="px-4 py-3 text-right">
-                              <div className="flex justify-end gap-2">
-                                <button
-                                  onClick={() => setEditingPO(po)}
-                                  className="w-7 h-7 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center hover:bg-blue-600 hover:text-white transition"
-                                  title="Edit"
-                                >
-                                  ✎
-                                </button>
-                                <button
-                                  onClick={() => handleDelete(po.id, po.po_no)}
-                                  disabled={isDeleting === po.id}
-                                  className="w-7 h-7 rounded-full bg-red-50 text-red-600 flex items-center justify-center hover:bg-red-600 hover:text-white transition disabled:opacity-40"
-                                  title="Delete"
-                                >
-                                  ✕
-                                </button>
-                              </div>
-                            </td>
-                          )}
-                        </tr>
-                      );
-                    })
-                  )}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Pagination */}
-            <div className="p-4 border-t border-gray-100 flex flex-wrap justify-between items-center gap-3 bg-gray-50/50">
-              <span className="text-xs text-gray-500">
-                Showing {total === 0 ? 0 : (page - 1) * limit + 1} to{' '}
-                {Math.min(page * limit, total)} of {total}
-              </span>
-              <div className="flex items-center gap-1">
-                <button
-                  disabled={page === 1}
-                  onClick={() => setPage((p) => p - 1)}
-                  className="w-8 h-8 rounded-full bg-white border border-gray-200 disabled:opacity-40 hover:bg-gray-100"
-                >
-                  ‹
-                </button>
-                {Array.from(
-                  { length: Math.min(5, Math.ceil(total / limit) || 1) },
-                  (_, i) => {
-                    const tp = Math.ceil(total / limit) || 1;
-                    let s = Math.max(1, page - 2);
-                    if (s + 4 > tp) s = Math.max(1, tp - 4);
-                    const p = s + i;
-                    if (p > tp) return null;
-                    return (
-                      <button
-                        key={p}
-                        onClick={() => setPage(p)}
-                        className={`w-8 h-8 rounded-full text-xs font-bold transition ${
-                          p === page
-                            ? 'bg-[#0b3d91] text-white'
-                            : 'bg-white border border-gray-200 hover:bg-gray-100'
-                        }`}
-                      >
-                        {p}
-                      </button>
-                    );
-                  }
-                )}
-                <button
-                  disabled={page >= Math.ceil(total / limit)}
-                  onClick={() => setPage((p) => p + 1)}
-                  className="w-8 h-8 rounded-full bg-white border border-gray-200 disabled:opacity-40 hover:bg-gray-100"
-                >
-                  ›
-                </button>
+        {/* ===================== TABLE ===================== */}
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-5">
+          <div className="p-4 border-b border-gray-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
+            <h2 className="text-sm font-bold text-gray-800 flex items-center gap-2">
+              <span className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center">≡</span>
+              Live Purchase Orders • Total {total} POs
+            </h2>
+            <div className="flex items-center gap-2 w-full md:w-auto">
+              <div className="relative flex-1 md:flex-none">
+                <input
+                  type="text"
+                  placeholder="Search PO No, Agency..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="pl-8 pr-3 py-2 text-xs border border-gray-200 rounded-full focus:ring-2 focus:ring-blue-500 outline-none w-full md:w-64 bg-gray-50 focus:bg-white"
+                />
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">🔍</span>
               </div>
             </div>
           </div>
 
-          {/* ---------- RIGHT COLUMN (Calendar + Activity) ---------- */}
-          {/* <div className="xl:col-span-1 space-y-5">
-            <CalendarWidget />
-            <RecentActivity />
-          </div> */}
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs">
+              <thead className="bg-gray-50 text-gray-500 uppercase text-[10px] tracking-wider">
+                <tr>
+                  <th className="px-4 py-3 font-semibold">PO No</th>
+                  <th className="px-4 py-3 font-semibold">Creator</th>
+                  <th className="px-4 py-3 font-semibold">Agency</th>
+                  <th className="px-4 py-3 font-semibold text-right">Value (INR)</th>
+                  <th className="px-4 py-3 font-semibold text-center">Enquiry Type</th>
+                  <th className="px-4 py-3 font-semibold text-center">Order Plant</th>
+                  <th className="px-4 py-3 font-semibold">Created</th>
+                  <th className="px-4 py-3 font-semibold text-center">Status</th>
+                  {user?.role === 'admin' && (
+                    <th className="px-4 py-3 font-semibold text-right">Actions</th>
+                  )}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {loading ? (
+                  <tr>
+                    <td colSpan={9} className="text-center py-12 text-gray-400">
+                      Loading...
+                    </td>
+                  </tr>
+                ) : paginatedData.length === 0 ? (
+                  <tr>
+                    <td colSpan={9} className="text-center py-12 text-gray-400">
+                      No records
+                    </td>
+                  </tr>
+                ) : (
+                  paginatedData.map((po) => {
+                    const status = deriveStatus(po);
+                    return (
+                      <tr key={po.id} className="hover:bg-blue-50/40 transition">
+                        <td className="px-4 py-3 font-bold text-[#0b3d91] font-mono text-[11px]">
+                          {po.po_no}
+                        </td>
+                        <td className="px-4 py-3 text-gray-700 truncate max-w-[140px]">
+                          {po.creator_name}
+                        </td>
+                        <td className="px-4 py-3 text-gray-700 truncate max-w-[180px]">
+                          {po.agency}
+                        </td>
+                        <td className="px-4 py-3 text-right font-semibold">
+                          {formatCurrency(po.value_inr)}
+                        </td>
+                        <td className="px-4 py-3 text-center">
+                          <span className="px-2 py-1 bg-blue-50 text-blue-700 rounded-full text-[10px] font-bold border border-blue-100">
+                            {po.enq_type || '—'}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 text-center font-semibold">
+                          {po.ord_plant || '—'}
+                        </td>
+                        <td className="px-4 py-3 text-gray-500 whitespace-nowrap">
+                          {formatDate(po.date)}
+                        </td>
+                        <td className="px-4 py-3 text-center">
+                          <span
+                            className={`px-2 py-1 rounded-full text-[10px] font-bold border ${statusStyles[status]}`}
+                          >
+                            {status}
+                          </span>
+                        </td>
+                        {user?.role === 'admin' && (
+                          <td className="px-4 py-3 text-right">
+                            <div className="flex justify-end gap-2">
+                              <button
+                                onClick={() => setEditingPO(po)}
+                                className="w-7 h-7 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center hover:bg-blue-600 hover:text-white transition"
+                                title="Edit"
+                              >
+                                ✎
+                              </button>
+                              <button
+                                onClick={() => handleDelete(po.id, po.po_no)}
+                                disabled={isDeleting === po.id}
+                                className="w-7 h-7 rounded-full bg-red-50 text-red-600 flex items-center justify-center hover:bg-red-600 hover:text-white transition disabled:opacity-40"
+                                title="Delete"
+                              >
+                                ✕
+                              </button>
+                            </div>
+                          </td>
+                        )}
+                      </tr>
+                    );
+                  })
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Pagination */}
+          <div className="p-4 border-t border-gray-100 flex flex-wrap justify-between items-center gap-3 bg-gray-50/50">
+            <span className="text-xs text-gray-500">
+              Showing {total === 0 ? 0 : (page - 1) * limit + 1} to{' '}
+              {Math.min(page * limit, total)} of {total}
+            </span>
+            <div className="flex items-center gap-1">
+              <button
+                disabled={page === 1}
+                onClick={() => setPage((p) => p - 1)}
+                className="w-8 h-8 rounded-full bg-white border border-gray-200 disabled:opacity-40 hover:bg-gray-100"
+              >
+                ‹
+              </button>
+              {Array.from(
+                { length: Math.min(5, Math.ceil(total / limit) || 1) },
+                (_, i) => {
+                  const tp = Math.ceil(total / limit) || 1;
+                  let s = Math.max(1, page - 2);
+                  if (s + 4 > tp) s = Math.max(1, tp - 4);
+                  const p = s + i;
+                  if (p > tp) return null;
+                  return (
+                    <button
+                      key={p}
+                      onClick={() => setPage(p)}
+                      className={`w-8 h-8 rounded-full text-xs font-bold transition ${
+                        p === page
+                          ? 'bg-[#0b3d91] text-white'
+                          : 'bg-white border border-gray-200 hover:bg-gray-100'
+                      }`}
+                    >
+                      {p}
+                    </button>
+                  );
+                }
+              )}
+              <button
+                disabled={page >= Math.ceil(total / limit)}
+                onClick={() => setPage((p) => p + 1)}
+                className="w-8 h-8 rounded-full bg-white border border-gray-200 disabled:opacity-40 hover:bg-gray-100"
+              >
+                ›
+              </button>
+            </div>
+          </div>
         </div>
+
+        {/* ===================== RIGHT COLUMN (Calendar + Activity) - COMMENTED ===================== */}
+        {/* <div className="xl:col-span-1 space-y-5">
+          <CalendarWidget />
+          <RecentActivity />
+        </div> */}
 
         {/* ===================== EDIT MODAL ===================== */}
         {editingPO && (

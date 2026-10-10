@@ -1,10 +1,10 @@
-// src/pages/ImportantLinks.jsx
+// src/pages/CoalMiningLinks.jsx
 const LINKS_DATA = [
   {
     id: 1,
-    title: 'NTPC HOME PAGE',
-    description: 'Official NTPC website — corporate information & updates',
-    url: 'https://www.ntpc.co.in',
+    title: 'KDCMP',
+    description: 'Official KDCMP website — procurement information & updates',
+    url: 'https://www.kdcmp.gov.in',
     theme: 'blue',
     bg: 'bg-blue-50',
     text: 'text-blue-600',
@@ -14,7 +14,7 @@ const LINKS_DATA = [
   },
   {
     id: 2,
-    title: 'NML HOME PAGE',
+    title: 'CBCMP',
     description: 'NML official portal — mining operations & updates',
     url: 'https://www.nML.co.in',
     theme: 'emerald',
@@ -24,10 +24,34 @@ const LINKS_DATA = [
     border: 'border-emerald-100',
     btnHover: 'hover:bg-emerald-600',
   },
+  {
+    id: 3,
+    title: 'PBCMP',
+    description: 'NML official portal — mining operations & updates',
+    url: 'https://www.nML.co.in',
+    theme: 'red',
+    bg: 'bg-red-50',
+    text: 'text-red-600',
+    hoverBg: 'group-hover:bg-red-600',
+    border: 'border-red-100',
+    btnHover: 'hover:bg-red-600',
+  },
+  {
+    id: 4,
+    title: 'BADAM',
+    description: 'NML official portal — mining operations & updates',
+    url: 'https://www.nML.co.in',
+    theme: 'yellow',
+    bg: 'bg-yellow-50',
+    text: 'text-yellow-600',
+    hoverBg: 'group-hover:bg-yellow-600',
+    border: 'border-yellow-100',
+    btnHover: 'hover:bg-yellow-600',
+  },
   
 ];
 
-const ImportantLinks = () => {
+const CoalMiningLinks = () => {
   return (
     <div className="min-h-screen bg-[#f5f7fb]">
       <div className="max-w-[1600px] mx-auto px-4 py-5">
@@ -36,12 +60,12 @@ const ImportantLinks = () => {
         <div className="flex items-center gap-2 text-xs text-gray-500 bg-white px-3 py-1.5 rounded-full border border-gray-200 shadow-sm w-fit mb-5">
           <span className="font-semibold text-blue-700">Home</span>
           <span>›</span>
-          <span>Important Links</span>
+          <span>Coal Mining Links</span>
         </div>
 
         {/* Main card */}
         <div className="bg-white rounded-[20px] p-6 shadow-[0_4px_20px_rgba(0,0,0,0.04)] border border-gray-100">
-          <h1 className="text-2xl font-bold text-gray-800 mb-1">Important Links</h1>
+          <h1 className="text-2xl font-bold text-gray-800 mb-1">Coal Mining Links</h1>
           <p className="text-xs text-gray-500 mb-6">Quick access to frequently used portals</p>
 
           {/* Grid */}
@@ -94,4 +118,4 @@ const ImportantLinks = () => {
   );
 };
 
-export default ImportantLinks;
+export default CoalMiningLinks;
