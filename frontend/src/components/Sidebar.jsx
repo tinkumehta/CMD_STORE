@@ -6,7 +6,6 @@ import {
   FileText, TrendingUp, Database, BookOpen, ChevronRight,
   Upload,
 } from 'lucide-react';
-import nml_logo from '../../public/nml_logo.png';
 
 const MENU = [
   { name: 'Dashboard', path: '/', icon: LayoutDashboard },
@@ -15,7 +14,7 @@ const MENU = [
   { name: 'Important Links', path: '/important-links', icon: LinkIcon },
   { name: 'Circulars & Guidelines', path: '/circulars', icon: FileText },
   { name: 'Dop', path: '/doppage', icon: TrendingUp },
-    { name: 'External Links', path: '/external-links', icon: LinkIcon },
+  { name: 'External Links', path: '/external-links', icon: LinkIcon },
   { name: 'Coal Mining Links', path: '/coal-mining-links', icon: LinkIcon },
   { name: 'Manuals & Standards', path: '/manuals', icon: BookOpen },
 ];
@@ -23,21 +22,27 @@ const MENU = [
 const Sidebar = () => {
   const { user } = useAuth();
 
+  // // 👇 Debug — browser console me dikhega
+  // console.log('Sidebar user:', user);
+  // console.log('User role:', user?.role);
+
   return (
     <aside
-      className="w-60 shrink-0 mt-4 ml-4 rounded-2xl sticky top-4  flex flex-col text-white border border-white/10 relative overflow-hidden shadow-xl"
+      className="w-60 shrink-0 flex flex-col text-white relative overflow-hidden"
       style={{
-         backgroundImage: "url('/sidebar.jpg')",
-         backgroundSize: 'cover 100%',
-         backgroundPosition: 'center',
-         backgroundRepeat: 'no-repeat',
-}}
+        backgroundImage: "url('/sidebar.jpg')",
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+      }}
     >
-      {/* Content — image ke upar direct */}
+      {/* Dark overlay for readability */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[#0b1e3a]/40 via-transparent to-[#0b1e3a]/60 pointer-events-none"></div>
+
+      {/* Content */}
       <div className="relative z-10 flex flex-col h-full w-full">
 
-
-        {/* NML LOGO */}
+        {/* ===================== NML LOGO ===================== */}
         <div className="flex items-center justify-center pt-5 pb-3 shrink-0">
           <img
             src="/ntpc_logo.jpg"
@@ -45,43 +50,65 @@ const Sidebar = () => {
             className="w-24 h-auto object-contain drop-shadow-lg"
           />
         </div>
-        {/* Menu */}
-        <nav className="flex-1 py-4 overflow-y-auto sidebar-scroll mt-20">
-          {MENU.map((item) => (
-            <NavLink
-              key={item.name}
-              to={item.path}
-              end={item.path === '/'}
-              className={({ isActive }) =>
-                `flex items-center gap-3 mx-2 px-3 py-2.5 text-sm rounded-lg transition-all ${
-                  isActive
-                    ? 'bg-blue-600 text-white font-semibold shadow-lg'
-                    : 'text-gray-100 hover:bg-white/10 hover:text-white'
-                }`
-              }
-            >
-              <item.icon size={18} />
-              <span className="truncate">{item.name}</span>
-              <ChevronRight size={14} className="ml-auto opacity-40" />
-            </NavLink>
-          ))}
 
-          {/* Admin Upload — sirf admin ko */}
-          {user?.role === 'admin' && (
-            <NavLink
-              to="/upload"
-              className={({ isActive }) =>
-                `flex items-center gap-3 mx-2 px-3 py-2.5 text-sm rounded-lg transition-all ${
-                  isActive
-                    ? 'bg-blue-600 text-white font-semibold shadow-lg'
-                    : 'text-gray-100 hover:bg-white/10 hover:text-white'
-                }`
-              }
-            >
-              <Upload size={18} />
-              <span className="truncate">Admin Upload</span>
-            </NavLink>
-          )}
+        {/* ===================== MENU — ONE BOX ===================== */}
+        <nav className="flex-1 px-3 pb-4">
+          <div className="bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-2 space-y-1 shadow-lg shadow-black/20">
+
+            {MENU.map((item) => (
+              <NavLink
+                key={item.name}
+                to={item.path}
+                end={item.path === '/'}
+                className={({ isActive }) =>
+                  `flex items-center gap-3 px-3 py-2.5 text-sm rounded-xl transition-all duration-300 ${
+                    isActive
+                      ? 'bg-blue-600 text-white font-semibold shadow-md'
+                      : 'text-gray-100 hover:bg-white/15 hover:text-white'
+                  }`
+                }
+              >
+                <item.icon size={18} />
+                <span className="truncate">{item.name}</span>
+                <ChevronRight size={14} className="ml-auto opacity-50" />
+              </NavLink>
+            ))}
+
+            {/* ===================== ADMIN UPLOAD ===================== */}
+            {user?.role === 'admin' ? (
+              <NavLink
+                to="/upload"
+                className={({ isActive }) =>
+                  `flex items-center gap-3 px-3 py-2.5 text-sm rounded-xl transition-all duration-300 border-t border-white/10 mt-1 pt-3 ${
+                    isActive
+                      ? 'bg-blue-600 text-white font-semibold shadow-md'
+                      : 'text-gray-100 hover:bg-white/15 hover:text-white'
+                  }`
+                }
+              >
+                <Upload size={18} />
+                <span className="truncate">Admin Upload</span>
+                <ChevronRight size={14} className="ml-auto opacity-50" />
+              </NavLink>
+            ) : (
+              /* Temporary test — hata sakte ho */
+              <NavLink
+                to="/upload"
+                className={({ isActive }) =>
+                  `flex items-center gap-3 px-3 py-2.5 text-sm rounded-xl transition-all duration-300 border-t border-white/10 mt-1 pt-3 ${
+                    isActive
+                      ? 'bg-blue-600 text-white font-semibold shadow-md'
+                      : 'text-gray-100 hover:bg-white/15 hover:text-white'
+                  }`
+                }
+              >
+                <Upload size={18} />
+                <span className="truncate">Admin Upload</span>
+                <ChevronRight size={14} className="ml-auto opacity-50" />
+              </NavLink>
+            )}
+
+          </div>
         </nav>
       </div>
     </aside>

@@ -4,8 +4,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { poApi } from '../api/poApi';
 import DonutChart from '../components/DonutChart';
 import PoTimeAnalysis from '../components/PoTimeAnalysis';
-import KpiCard from '../components/KpiCard';
-import OperationalInsights from '../components/OperationalInsights';
+import KpiCard from '../components/Cards/KpiCard';
+import OperationalInsights from '../components/Cards/OperationalInsights';
 import { useAuth } from '../context/AuthContext';
 import EditPOModal from '../components/EditPOModal';
 import Topbar from '../components/Topbar';
@@ -254,9 +254,9 @@ const Dashboard = () => {
       <div className="max-w-[1600px] mx-auto px-4 py-5">
 
         {/* ===================== TOPBAR ===================== */}
-        <div className="mb-5">
+        {/* <div className="mb-5">
           <Topbar />
-        </div>
+        </div> */}
 
         {/* ===================== LOGIN / LOGOUT ===================== */}
         <div className="mb-5 flex justify-end">
@@ -318,6 +318,15 @@ const Dashboard = () => {
             change="+18%"
             subtitle="vs. last month"
             tone="green"
+            sparkData={[5, 6, 6, 7, 6, 8, 9]}
+          />
+          <KpiCard
+            icon={<span>💬</span>}
+            title="Chat Box"
+             value={` Coming soon..`}
+            change="HI"
+            subtitle=""
+            tone="orange"
             sparkData={[5, 6, 6, 7, 6, 8, 9]}
           />
         </div>
