@@ -16,9 +16,11 @@ const Topbar = () => {
 
       {/* Welcome text overlay (left side) */}
       <div className="absolute inset-0 pointer-events-none m-6 md:m-10 flex flex-col justify-center">
+        <marquee direction="right">
         <h1 className="text-lg md:text-xl text-white font-bold tracking-wider drop-shadow-md">
           Welcome
         </h1>
+        </marquee>
         <h2 className="text-xl md:text-2xl text-white font-semibold tracking-widest drop-shadow-md">
           Shared Service Site C&amp;M
         </h2>
