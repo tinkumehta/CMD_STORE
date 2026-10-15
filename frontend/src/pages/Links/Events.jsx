@@ -4,7 +4,7 @@ import React from 'react';
 const EVENT_ITEMS = [
   { label: 'Highlights', href: '/about-us', color: 'from-amber-500 to-orange-500' },
   { label: 'Events', href: '/cmdepartment', color: 'from-emerald-500 to-teal-500' },
-  { label: "Party's", href: '/manuals', color: 'from-pink-500 to-rose-500' },
+  { label: "Today completed po", href: '/manuals', color: 'from-pink-500 to-rose-500' },
 ];
 
 function Events() {

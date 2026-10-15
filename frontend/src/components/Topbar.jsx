@@ -17,27 +17,54 @@ const Topbar = () => {
       />
 
       {/* Welcome text overlay (left side) */}
-      <div className="absolute inset-0 pointer-events-none m-6 md:m-10 flex flex-col justify-center">
+       <div className="absolute inset-x-0 top-3 md:top-4 pointer-events-none px-6 md:px-10 flex flex-col">
+
+        {/* Welcome Text */}
         <marquee direction="right">
-        <h1 className="text-lg md:text-xl text-white font-bold tracking-wider drop-shadow-md">
-          Welcome
+        <h1
+          className="text-2xl md:text-4xl font-extrabold tracking-[0.15em] text-white drop-shadow-lg"
+          style={{
+            fontFamily: "'IBM Plex Sans', sans-serif",
+            textShadow: '0 3px 10px rgba(0,0,0,0.7)',
+          }}
+        >
+          WELCOME
         </h1>
         </marquee>
-        <h2 className="text-xl md:text-2xl text-white font-semibold tracking-widest drop-shadow-md">
-          Shared Service Site C&amp;M
+
+        {/* Main Heading */}
+        <h2
+          className="text-2xl md:text-2xl font-bold uppercase tracking-[0.08em] drop-shadow-lg mt-2"
+          style={{
+            fontFamily: "Cursive",
+            color: '#FFFFFF',
+            textShadow: '0 2px 8px rgba(0,0,0,0.5)',
+          }}
+        >
+          Shared Service Site C&M
         </h2>
-        <h3 className="text-sm md:text-[15px] text-white font-semibold tracking-widest mt-1 opacity-90 drop-shadow-md">
+
+        {/* Department Names */}
+        <h3
+          className="text-[11px] md:text-xl font-semibold uppercase tracking-[0.5em] mt-2"
+          style={{
+            fontFamily: "'IBM Plex Sans', sans-serif",
+            color: '#f3c634',
+            textShadow: '0 1px 4px rgba(0,0,0,0.6)',
+          }}
+        >
           CBCMP &amp; KDCMP
         </h3>
+
       </div>
 
       {/* NML Logo (top-right) */}
-      <div className="absolute top-3 right-4 md:right-6 z-20 flex items-center gap-3">
+      <div className="absolute top-20 right-4 md:right-2 z-10 flex items-center gap-3">
         <div className="rounded-lg px-4 py-2 flex items-center justify-center">
           <img
-            src="/nml_logo.png"
+            src="/nml-logo.png"
             alt="NML Logo"
-            className="h-10 md:h-14 w-auto object-contain drop-shadow-md"
+            className="h-10 md:h-14 w-50 object-contain drop-shadow-md "
           />
         </div>
       </div>
