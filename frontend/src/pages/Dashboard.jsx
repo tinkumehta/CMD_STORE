@@ -9,6 +9,7 @@ import KpiCard from '../components/Cards/KpiCard';
 import OperationalInsights from '../components/Cards/OperationalInsights';
 import { useAuth } from '../context/AuthContext';
 import EditPOModal from '../components/EditPOModal';
+import Events from './Links/Events';
 
 // ------------------------------------------------------------
 // Helpers
@@ -192,6 +193,7 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-[#f5f7fb]">
       <div className="max-w-[1600px] mx-auto px-4 py-5">
+        {/* <Events /> */}
 
         {/* ===================== LOGIN / LOGOUT ===================== */}
         <div className="mb-5 flex justify-end">

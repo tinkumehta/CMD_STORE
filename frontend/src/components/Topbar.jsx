@@ -1,12 +1,14 @@
 // src/components/Topbar.jsx
 import { useAuth } from '../context/AuthContext';
 import topbar from '../../public/topbar.jpg';
+import Events from '../pages/Links/Events';
 
 const Topbar = () => {
   const { user } = useAuth();
 
   return (
-    <header className="relative w-full overflow-hidden rounded-2xl shadow-lg">
+    <>
+    <header className="relative w-full overflow-hidden rounded-2xl shadow-lg mb-3">
       {/* Background Banner Image */}
       <img
         src={topbar}
@@ -40,6 +42,8 @@ const Topbar = () => {
         </div>
       </div>
     </header>
+    <Events/>
+    </>
   );
 };
 
