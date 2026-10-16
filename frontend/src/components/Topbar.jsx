@@ -20,7 +20,7 @@ const Topbar = () => {
        <div className="absolute inset-x-0 top-3 md:top-4 pointer-events-none px-6 md:px-10 flex flex-col">
 
         {/* Welcome Text */}
-        <marquee direction="right">
+        
         <h1
           className="text-2xl md:text-4xl font-extrabold tracking-[0.15em] text-white drop-shadow-lg"
           style={{
@@ -30,7 +30,7 @@ const Topbar = () => {
         >
           WELCOME
         </h1>
-        </marquee>
+       
 
         {/* Main Heading */}
         <h2

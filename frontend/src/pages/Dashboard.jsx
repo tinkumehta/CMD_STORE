@@ -133,21 +133,31 @@ const Dashboard = () => {
   }, [searchFilteredData]);
 
   // ---------- KPIs ----------
- // ---------- KPIs ----------
+
 const kpis = useMemo(() => {
   const total = searchFilteredData.length;
   const totalValue = searchFilteredData.reduce(
     (sum, po) => sum + (Number(po.value_inr) || 0),
     0
   );
+
+  // Only count POs that completed in less than 30 days
+  const fastPOs = searchFilteredData.filter((po) => {
+    const d = Number(po.pr_po_days) || 0;
+    return d > 0 && d < 30;
+  });
+
   const avgDays =
-    total > 0
-      ? searchFilteredData.reduce((sum, po) => sum + (Number(po.pr_po_days) || 0), 0) / total
+    fastPOs.length > 0
+      ? fastPOs.reduce((sum, po) => sum + (Number(po.pr_po_days) || 0), 0) / fastPOs.length
       : 0;
+
   return {
     total,
     totalValue,
-    avgDays,                                          // ← CHANGED: was avgWeeks
+    avgDays: Math.round(avgDays * 10) / 10,   // 1 decimal, always < 30
+    fastCount: fastPOs.length,
+    fastPercent: total > 0 ? Math.round((fastPOs.length / total) * 100) : 0,
     pending: searchFilteredData.filter((po) => deriveStatus(po) === 'Pending').length,
   };
 }, [searchFilteredData]);
@@ -247,15 +257,15 @@ const kpis = useMemo(() => {
             tone="purple"
             sparkData={[4, 6, 5, 7, 9, 8, 11]}
           />
-          <KpiCard
-            icon={<span>⏱</span>}
-            title="Average Completion Time"
-            value={`${kpis.avgDays.toFixed(1)} Days`}
-            change="+18%"
-            subtitle="vs. last month"
-            tone="green"
-            sparkData={[5, 6, 6, 7, 6, 8, 9]}
-          />
+               <KpiCard
+        icon={<span>⏱</span>}
+        title="Avg Completion (Fast POs)"
+        value={`${kpis.avgDays.toFixed(1)} Days`}
+        change={`${kpis.fastPercent}%`}
+        subtitle={`of ${kpis.fastCount} POs < 30 days`}
+        tone="green"
+        sparkData={[5, 6, 6, 7, 6, 8, 9]}
+      />
           <KpiCard
             icon={<span>💬</span>}
             title="Chat Box"

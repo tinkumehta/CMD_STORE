@@ -30,7 +30,7 @@ const documents = [
 
 const DopPage = () => {
   return (
-    <div className="min-h-screen bg-gray-50 ">
+    <div className="min-h-screen bg-linear-to-r from-[#EDE0D3] via-[#F0C9C9] to-[#EBDFF2] ">
       <div className="max-w-[1600px] mx-auto px-4 py-5">
 
         {/* Breadcrumb */}

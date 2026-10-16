@@ -95,8 +95,8 @@ const CmDepartment = () => {
         
         {/* Page Header */}
         <div className="mb-10 text-center">
-          <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">C & M Department Directory</h1>
-          <p className="mt-2 text-lg text-gray-500">Key Personnel and Contact Information</p>
+          <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">C & M Department and Stores <br/>Directory</h1>
+          <p className="mt-2 text-lg text-gray-500">  Key Personnel and Contact Information</p>
         </div>
 
         {/* Staff Grid */}
