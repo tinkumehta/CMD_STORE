@@ -50,9 +50,9 @@ const LINKS_DATA = [
   },
   {
     id: 4,
-    title: 'GST NSM CODE',
+    title: 'GST HSN CODE',
     description: 'GST Network — Nodal Service Mapping & compliance portal',
-    url: 'https://www.ntpc.co.in',
+    url: 'https://services.gst.gov.in/services/searchhsnsac',
     gradient: 'from-pink-500 to-fuchsia-600',
     bg: 'bg-pink-50',
     text: 'text-pink-600',
