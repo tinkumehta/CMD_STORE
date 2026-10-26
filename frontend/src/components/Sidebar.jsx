@@ -4,19 +4,26 @@ import { useAuth } from '../context/AuthContext';
 import {
   LayoutDashboard, Info, Folder, Link as LinkIcon,
   FileText, TrendingUp, Database, BookOpen, ChevronRight,
-  Upload,
+  Upload,CalendarArrowDown
 } from 'lucide-react';
 
 const MENU = [
   { name: 'Dashboard', path: '/', icon: LayoutDashboard, iconBg: 'bg-blue-500', iconColor: 'text-white' },
   { name: 'About Us', path: '/about-us', icon: Info, iconBg: 'bg-cyan-500/90', iconColor: 'text-white' },
-  { name: 'CmDepartment', path: '/cmdepartment', icon: Folder, iconBg: 'bg-sky-500/90', iconColor: 'text-white' },
+  { name: 'C&M Directory', path: '/cmdepartment', icon: Folder, iconBg: 'bg-sky-500/90', iconColor: 'text-white' },
   { name: 'Important Links', path: '/important-links', icon: LinkIcon, iconBg: 'bg-purple-500/90', iconColor: 'text-white' },
   { name: 'Circulars & Guidelines', path: '/circulars', icon: FileText, iconBg: 'bg-emerald-500/90', iconColor: 'text-white' },
-  { name: 'Dop', path: '/doppage', icon: TrendingUp, iconBg: 'bg-orange-500/90', iconColor: 'text-white' },
+  { name: 'DOP', path: '/doppage', icon: TrendingUp, iconBg: 'bg-orange-500/90', iconColor: 'text-white' },
   { name: 'External Links', path: '/external-links', icon: LinkIcon, iconBg: 'bg-pink-500/90', iconColor: 'text-white' },
   { name: 'Coal Mining Links', path: '/coal-mining-links', icon: LinkIcon, iconBg: 'bg-teal-500/90', iconColor: 'text-white' },
   { name: 'Manuals & Standards', path: '/manuals', icon: BookOpen, iconBg: 'bg-indigo-500/90', iconColor: 'text-white' },
+  { name: 'Events', path: '/events', icon: CalendarArrowDown, iconBg: 'bg-rose-500/90', iconColor: 'text-white' },
+  // Inside your MENU array in Sidebar.jsx
+{ 
+  name: 'Live Work Status', 
+  path: '/live-work-status', 
+  icon: LayoutDashboard // or any other icon
+}
 ];
 
 const Sidebar = () => {
@@ -115,6 +122,7 @@ const Sidebar = () => {
 
             {/* ===================== ADMIN UPLOAD ===================== */}
             {(user?.role === 'admin' || true) && (
+              <>
               <NavLink
                 to="/upload"
                 className={({ isActive }) =>
@@ -133,6 +141,19 @@ const Sidebar = () => {
                 </span>
                 <ChevronRight size={16} className="ml-auto opacity-70 group-hover:translate-x-0.5 transition-transform shrink-0" />
               </NavLink>
+               <NavLink
+                to="/upload-work-status"
+               className={({ isActive }) =>
+                 `flex items-center gap-3 mx-2 px-3 py-2.5 text-sm rounded-lg transition-all ${
+                   isActive ? 'bg-blue-600 text-white font-semibold' : 'text-gray-100 hover:bg-white/10'
+                 }`
+               }
+             >  
+               <Upload size={18} />
+               <span className="truncate">Upload Work Status</span>
+             </NavLink>
+              </>
+              
             )}
 
           </div>

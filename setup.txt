@@ -72,3 +72,31 @@ VALUES ('admin', '$2a$10$N9qo8uLOickgx2ZMRZoMy.MrTZ4rB1lPBhRw5c5EwJk8Xq4G4G4G4',
 
 Delete row
 DELETE FROM purchase_orders;
+
+SECONDE TABLE IS LIVE PO'S WORK
+
+CREATE TABLE work_cases (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    case_type VARCHAR(50),
+    sr_no INT,
+    dealing_executive VARCHAR(255),
+    pradip_ref VARCHAR(255),
+    tendering_ref VARCHAR(255),
+    project VARCHAR(50),
+    package TEXT,
+    cost_estimate DECIMAL(15, 2),
+    mode_of_tendering VARCHAR(255),
+    pr_no VARCHAR(255),
+    pr_date VARCHAR(255),
+    critical_package VARCHAR(50),
+    tendering_type VARCHAR(255),
+    nit_date VARCHAR(255),
+    technical_bod VARCHAR(255),
+    status VARCHAR(255),
+    loi_date VARCHAR(255),
+    po_date VARCHAR(255),
+    agency_name VARCHAR(255),
+    remarks TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+); 
+

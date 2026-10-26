@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 import Sidebar from './components/Sidebar';
 import Topbar from './components/Topbar';
-
+import Event from './pages/Links/Events';
 import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
 import AboutUs from './pages/Links/AboutUs';
@@ -17,6 +17,8 @@ import UploadPage from './pages/UploadPage';
 import ExternalLinks from './pages/Links/ExternalLinks';
 import CoalMiningLinks from './pages/Links/CoalMiningLinks';
 import ChartDetail from './pages/ChartDetail';   // ← NEW
+import LiveWorkStatus from './pages/LiveWorkStatus';
+import UploadWorkStatus from './pages/Upload/UploadWorkStatus';
 
 const App = () => {
   return (
@@ -42,10 +44,16 @@ const App = () => {
                 <Route path="/external-links" element={<ExternalLinks />} />
                 <Route path="/circulars" element={<Circulars />} />
                 <Route path="/doppage" element={<DopPage />} />
+                <Route path="/live-work-status" element={<LiveWorkStatus />} />
                 <Route path="/manuals" element={<Manuals />} />
                 <Route path="/coal-mining-links" element={<CoalMiningLinks />} />
+                <Route path="/events" element={<Event />} />
                 <Route element={<ProtectedRoute />}>
                   <Route path="/upload" element={<UploadPage />} />
+                  
+                
+                <Route path="/upload-work-status" element={<UploadWorkStatus />} /> {/* NEW */}
+
                 </Route>
               </Routes>
             </main>

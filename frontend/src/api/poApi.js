@@ -28,3 +28,17 @@ deletePO: async (id) => {
     });
   },
 };
+
+// Add to src/api/poApi.js
+export const workApi = {
+  getAll: async (params) => {
+    return axiosClient.get('/work-cases', { params });
+  },
+  uploadExcel: async (file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return axiosClient.post('/work-cases/upload', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+  },
+};

@@ -1,7 +1,7 @@
 // src/components/Topbar.jsx
 import { useAuth } from '../context/AuthContext';
 import topbar from '../../public/topbar.jpg';
-import Events from '../pages/Links/Events';
+import Latest from '../pages/Links/Latest';
 
 const Topbar = () => {
   const { user } = useAuth();
@@ -30,7 +30,7 @@ const Topbar = () => {
         >
           WELCOME
         </h1>
-       
+        
 
         {/* Main Heading */}
         <h2
@@ -69,7 +69,7 @@ const Topbar = () => {
         </div>
       </div>
     </header>
-    <Events/>
+    <Latest/>
     </>
   );
 };
