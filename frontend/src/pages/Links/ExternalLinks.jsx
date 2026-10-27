@@ -3,24 +3,22 @@ const LINKS_DATA = [
   {
     id: 1,
     title: 'NTPC TENDER',
-    description: 'NTPC official portal — procurement information & updates',
-    url: 'https://www.ntpc.co.in',
+    url: 'https://www.eprocurentpc.nic.in/nicgep/app',
     gradient: 'from-emerald-500 to-teal-600',
     bg: 'bg-emerald-50',
     text: 'text-emerald-600',
     border: 'border-emerald-100',
     hoverBorder: 'hover:border-emerald-300',
-    icon: (
-      <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-      </svg>
-    ),
+    // icon: (
+    //   <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    //     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+    //   </svg>
+    // ),
   },
   {
     id: 2,
     title: 'UDYAM VERIFICATION',
-    description: 'Verify Udyam registration numbers of vendors & suppliers',
-    url: 'https://www.ntpc.co.in',
+    url: 'https://udyamregistration.gov.in/Udyam_Verify.aspx',
     gradient: 'from-red-500 to-rose-600',
     bg: 'bg-red-50',
     text: 'text-red-600',
@@ -34,9 +32,8 @@ const LINKS_DATA = [
   },
   {
     id: 3,
-    title: 'BIS LINE',
-    description: 'Bureau of Indian Standards — product certification & standards',
-    url: 'https://www.ntpc.co.in',
+    title: 'BIS License Verification',
+    url: 'https://www.services.bis.gov.in/php/BIS_2.0/bisconnect/knowyourstandards/Indian_standards/isdetails',
     gradient: 'from-amber-500 to-orange-600',
     bg: 'bg-amber-50',
     text: 'text-amber-600',
@@ -50,9 +47,8 @@ const LINKS_DATA = [
   },
   {
     id: 4,
-    title: 'GST HSN CODE',
-    description: 'GST Network — Nodal Service Mapping & compliance portal',
-    url: 'https://services.gst.gov.in/services/searchhsnsac',
+    title: 'BIS Code',
+    url: 'https://standards.bsbedge.com/dashboard',
     gradient: 'from-pink-500 to-fuchsia-600',
     bg: 'bg-pink-50',
     text: 'text-pink-600',

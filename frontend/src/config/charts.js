@@ -1,5 +1,4 @@
 // src/config/charts.js
-
 export const getPlantGroup = (code) => {
   const c = String(code || '').trim();
   if (c === '1079' || c === '2401') return 'CBCMP';
@@ -71,12 +70,29 @@ export const CHART_CONFIGS = [
         return d > 60;
       }),
   },
-  {
+    {
     id: 'estimate-vs-award',
     title: 'Estimate vs Award',
-    subtitle: 'Coming soon',
+    subtitle: 'Value Comparison',
     icon: '💰',
     color: '#F59E0B',
-    comingSoon: true,
+    getData: (pos) => {
+      let over = 0, under = 0;
+      // Compare 'value_inr' (Estimate) with 'amount_rs_l' (Award) if available
+      pos.forEach(po => {
+        const est = Number(po.value_inr) || 0;
+        const award = Number(po.amount_rs_l) || 0;
+        if (award > 0) {
+          if (award > est) over++;
+          else under++;
+        }
+      });
+      // If no award data exists yet, show a placeholder
+      if (over === 0 && under === 0) {
+        return { labels: ['No Data'], data: [1] };
+      }
+      return { labels: ['Award > Est', 'Award < Est'], data: [over, under] };
+    },
+    filterPOs: (pos, selection) => pos, // Optional filter logic
   },
 ];

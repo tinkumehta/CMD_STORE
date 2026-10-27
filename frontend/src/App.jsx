@@ -1,6 +1,6 @@
 // src/App.jsx
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-
+import WorkFlowDetail from './pages/WorkFlowDetail';
 import Sidebar from './components/Sidebar';
 import Topbar from './components/Topbar';
 import Event from './pages/Links/Events';
@@ -48,6 +48,7 @@ const App = () => {
                 <Route path="/manuals" element={<Manuals />} />
                 <Route path="/coal-mining-links" element={<CoalMiningLinks />} />
                 <Route path="/events" element={<Event />} />
+                 <Route path="/work-flow/:step" element={<WorkFlowDetail />} />
                 <Route element={<ProtectedRoute />}>
                   <Route path="/upload" element={<UploadPage />} />
                   
