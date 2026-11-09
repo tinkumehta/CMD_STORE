@@ -3,7 +3,7 @@ import { useEffect, useState, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { poApi } from '../api/poApi';
 import { CHART_CONFIGS, getPlantGroup } from '../config/charts';
-import DonutChart from '../components/DonutChart';
+import DonutChart from '../components/PieChart/DonutChart';
 
 const formatCurrency = (n) =>
   '₹ ' + (Number(n) || 0).toLocaleString('en-IN', { maximumFractionDigits: 2 });

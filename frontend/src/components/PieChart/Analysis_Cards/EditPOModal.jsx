@@ -1,6 +1,6 @@
 // src/components/EditPOModal.jsx
 import { useState } from 'react';
-import { poApi } from '../api/poApi';
+import { poApi } from '../../../api/poApi';
 
 const EditPOModal = ({ po, onClose, onSave }) => {
   const [formData, setFormData] = useState({ ...po });

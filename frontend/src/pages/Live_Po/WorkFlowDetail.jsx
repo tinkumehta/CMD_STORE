@@ -1,30 +1,64 @@
 // src/pages/WorkFlowDetail.jsx
 import { useEffect, useState, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { workApi } from '../api/poApi';
+import { workApi } from '../../api/poApi';
 import { ArrowLeft, Clock, FileText, Megaphone, PackageOpen, Stamp } from 'lucide-react';
 
 const formatCurrency = (n) => '₹ ' + (Number(n) || 0).toLocaleString('en-IN', { maximumFractionDigits: 2 });
 
-// Date parsing logic (same as dashboard)
+// BULLETPROOF Date Parser: Strictly assumes DD-MM-YYYY or DD.MM.YYYY
 const parseDate = (dateStr) => {
   if (!dateStr || dateStr === 'NA' || dateStr === '-') return null;
-  if (dateStr instanceof Date) return dateStr;
+  if (dateStr instanceof Date) return isNaN(dateStr.getTime()) ? null : dateStr;
+
   const str = String(dateStr).trim();
-  if (str.includes('-')) {
-    const parts = str.split('-');
-    if (parts[0].length === 4) return new Date(parts[0], parts[1] - 1, parts[2]); 
-    return new Date(parts[2], parts[1] - 1, parts[0]); 
+  
+  // Split by -, /, or .
+  const parts = str.split(/[-/.]/);
+
+  if (parts.length === 3) {
+    const p1 = parseInt(parts[0], 10);
+    const p2 = parseInt(parts[1], 10);
+    const p3 = parseInt(parts[2], 10);
+
+    // Check if it's YYYY-MM-DD (If the first part is a 4-digit year)
+    if (p1 > 1000) {
+      return new Date(Date.UTC(p1, p2 - 1, p3));
+    }
+    
+    // Otherwise, strictly assume DD-MM-YYYY (First is Day, Second is Month, Third is Year)
+    return new Date(Date.UTC(p3, p2 - 1, p1));
   }
-  return new Date(str);
+
+  // Fallback for standard date strings
+  const d = new Date(str);
+  return isNaN(d.getTime()) ? null : d;
 };
 
+// Clean display format for the table (using UTC to prevent timezone shifting)
+const formatDate = (dateStr) => {
+  const d = parseDate(dateStr);
+  if (!d) return '—';
+  return d.toLocaleDateString('en-GB', { 
+    day: '2-digit', 
+    month: 'short', 
+    year: 'numeric',
+    timeZone: 'UTC' // Crucial: Keeps the exact date entered
+  });
+};
+
+// Accurate Day Difference calculation using UTC
 const getDaysDiff = (date1, date2) => {
   const d1 = parseDate(date1);
   const d2 = parseDate(date2);
-  if (!d1 || !d2 || isNaN(d1) || isNaN(d2)) return null;
-  const diffTime = Math.abs(d2 - d1);
-  return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  if (!d1 || !d2) return null;
+  
+  const utc1 = d1.getTime();
+  const utc2 = d2.getTime();
+  
+  // Use Math.abs so if end date is entered before start date, it still calculates the gap
+  const diffTime = Math.abs(utc2 - utc1);
+  return Math.round(diffTime / (1000 * 60 * 60 * 24));
 };
 
 const WorkFlowDetail = () => {
@@ -49,14 +83,12 @@ const WorkFlowDetail = () => {
     fetchData();
   }, []);
 
-  // Define step configurations
   const stepConfig = {
     'pr-nit': { title: 'PR to NIT Timeline', icon: <FileText size={24} />, color: 'bg-[#13293D]' },
     'nit-bod': { title: 'NIT to BOD Timeline', icon: <Megaphone size={24} />, color: 'bg-[#0D9488]' },
     'bod-award': { title: 'BOD to Award Timeline (Completed < 30 Days)', icon: <PackageOpen size={24} />, color: 'bg-[#EA580C]' },
   }[step] || { title: 'Work Flow Details', icon: <Clock size={24} />, color: 'bg-gray-800' };
 
-  // Filter and calculate days
   const filteredData = useMemo(() => {
     let result = workCases.map(row => {
       let days = null;
@@ -77,7 +109,7 @@ const WorkFlowDetail = () => {
     // Filter out rows where days couldn't be calculated
     result = result.filter(r => r.calculatedDays !== null);
 
-    // Specific filter for Award step: Only show <= 30 days
+    // Specific filter for Award step
     if (step === 'bod-award') {
       result = result.filter(r => r.calculatedDays <= 30);
     }
@@ -92,7 +124,6 @@ const WorkFlowDetail = () => {
       );
     }
 
-    // Sort by fastest first
     return result.sort((a, b) => a.calculatedDays - b.calculatedDays);
   }, [workCases, step, search]);
 
@@ -158,8 +189,9 @@ const WorkFlowDetail = () => {
                         <p className="font-medium text-gray-700 leading-relaxed line-clamp-2" title={row.package}>{row.package}</p>
                         <p className="text-[10px] text-gray-400 mt-1">{row.project}</p>
                       </td>
-                      <td className="px-6 py-4 text-center font-medium text-gray-600 bg-gray-50/50">{row.startDate}</td>
-                      <td className="px-6 py-4 text-center font-medium text-gray-600 bg-gray-50/50">{row.endDate}</td>
+                      {/* Displaying formatted dates */}
+                      <td className="px-6 py-4 text-center font-medium text-gray-600 bg-gray-50/50">{formatDate(row.startDate)}</td>
+                      <td className="px-6 py-4 text-center font-medium text-gray-600 bg-gray-50/50">{formatDate(row.endDate)}</td>
                       <td className="px-6 py-4 text-center">
                         <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full font-bold border ${
                           row.calculatedDays <= 15 ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 

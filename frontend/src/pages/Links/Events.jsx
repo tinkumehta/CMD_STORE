@@ -137,9 +137,9 @@ We thank all participating vendors and business representatives for their valuab
   },
   {
     id: 3,
-    title: '',
-    date: '2025',
-    image: 'frellwall.jpg',
+    title: 'Transfer Celebration of YK Singh Sir',
+    date: '2026',
+    image: 'yksinghtransfer.jpg',
     description:
       '',
     details: `
@@ -272,9 +272,9 @@ function Event() {
                   <h1 className="text-2xl md:text-3xl lg:text-4xl font-extrabold text-white leading-tight mb-2 drop-shadow-md">
                     {EVENTS[currentSlide].title}
                   </h1>
-                  <p className="text-xs md:text-sm text-gray-200 leading-relaxed mb-6 line-clamp-2 md:line-clamp-3 drop-shadow">
+                  {/* <p className="text-xs md:text-sm text-gray-200 leading-relaxed mb-6 line-clamp-2 md:line-clamp-3 drop-shadow">
                     {EVENTS[currentSlide].description}
-                  </p>
+                  </p> */}
                   <button
                     onClick={() => openEvent(EVENTS[currentSlide])}
                     className="inline-flex items-center gap-2 rounded-lg bg-white px-5 py-2.5 text-xs md:text-sm font-bold text-gray-900 transition-all hover:bg-blue-600 hover:text-white hover:scale-105 shadow-lg"

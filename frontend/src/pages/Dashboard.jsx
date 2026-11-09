@@ -2,12 +2,12 @@
 import { useEffect, useState, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { poApi, workApi } from '../api/poApi';
-import ChartCard from '../components/ChartCard';
+import ChartCard from '../components/PieChart/Analysis_Cards/ChartCard';
 import { CHART_CONFIGS } from '../config/charts';
 import KpiCard from '../components/Cards/KpiCard';
 import WorkFlowStatus from '../components/WorkFlowStatus';
 import { useAuth } from '../context/AuthContext';
-import EditPOModal from '../components/EditPOModal';
+import EditPOModal from '../components/PieChart/Analysis_Cards/EditPOModal';
 
 
 

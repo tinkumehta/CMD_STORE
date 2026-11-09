@@ -1,6 +1,6 @@
 // src/App.jsx
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import WorkFlowDetail from './pages/WorkFlowDetail';
+import WorkFlowDetail from './pages/Live_Po/WorkFlowDetail';
 import Sidebar from './components/Sidebar';
 import Topbar from './components/Topbar';
 import Event from './pages/Links/Events';
@@ -17,7 +17,7 @@ import UploadPage from './pages/UploadPage';
 import ExternalLinks from './pages/Links/ExternalLinks';
 import CoalMiningLinks from './pages/Links/CoalMiningLinks';
 import ChartDetail from './pages/ChartDetail';   // ← NEW
-import LiveWorkStatus from './pages/LiveWorkStatus';
+import LiveWorkStatus from './pages/Live_Po/LiveWorkStatus';
 import UploadWorkStatus from './pages/Upload/UploadWorkStatus';
 
 const App = () => {

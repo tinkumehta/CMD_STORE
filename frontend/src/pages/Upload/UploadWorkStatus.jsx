@@ -1,12 +1,14 @@
 // src/pages/UploadWorkStatus.jsx
 import { useState, useRef } from 'react';
 import { workApi } from '../../api/poApi';
+import {useNavigate} from 'react-router-dom'
 
 const UploadWorkStatus = () => {
   const [file, setFile] = useState(null);
   const [status, setStatus] = useState({ type: '', message: '' });
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef(null);
+  const navigate = useNavigate();
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
@@ -19,13 +21,14 @@ const UploadWorkStatus = () => {
   const handleUpload = async (e) => {
     e.preventDefault();
     if (!file) return setStatus({ type: 'error', message: 'Please select a file.' });
-
+    navigate('/');
     setIsUploading(true);
     setStatus({ type: '', message: '' });
 
     try {
       const response = await workApi.uploadExcel(file);
       setStatus({ type: 'success', message: response.data.message });
+
       setFile(null);
       if (fileInputRef.current) fileInputRef.current.value = '';
     } catch (error) {

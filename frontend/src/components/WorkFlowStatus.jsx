@@ -3,24 +3,47 @@ import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FileText, Megaphone, PackageOpen, Stamp, MousePointerClick } from 'lucide-react';
 
+// BULLETPROOF DATE PARSER (Fixed to handle dots, dashes, and DD-MM-YYYY)
 const parseDate = (dateStr) => {
   if (!dateStr || dateStr === 'NA' || dateStr === '-') return null;
-  if (dateStr instanceof Date) return dateStr;
+  if (dateStr instanceof Date) return isNaN(dateStr.getTime()) ? null : dateStr;
+
   const str = String(dateStr).trim();
-  if (str.includes('-')) {
-    const parts = str.split('-');
-    if (parts[0].length === 4) return new Date(parts[0], parts[1] - 1, parts[2]); 
-    return new Date(parts[2], parts[1] - 1, parts[0]); 
+  
+  // Split by -, /, or .
+  const parts = str.split(/[-/.]/);
+
+  if (parts.length === 3) {
+    const p1 = parseInt(parts[0], 10);
+    const p2 = parseInt(parts[1], 10);
+    const p3 = parseInt(parts[2], 10);
+
+    // Check if it's YYYY-MM-DD (If the first part is a 4-digit year)
+    if (p1 > 1000) {
+      return new Date(Date.UTC(p1, p2 - 1, p3));
+    }
+    
+    // Otherwise, strictly assume DD-MM-YYYY (First is Day, Second is Month, Third is Year)
+    return new Date(Date.UTC(p3, p2 - 1, p1));
   }
-  return new Date(str);
+
+  // Fallback
+  const d = new Date(str);
+  return isNaN(d.getTime()) ? null : d;
 };
 
+// ACCURATE MATH (Using UTC to prevent timezone shifting)
 const getDaysDiff = (date1, date2) => {
   const d1 = parseDate(date1);
   const d2 = parseDate(date2);
-  if (!d1 || !d2 || isNaN(d1) || isNaN(d2)) return null;
-  const diffTime = Math.abs(d2 - d1);
-  return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  if (!d1 || !d2) return null;
+  
+  const utc1 = d1.getTime();
+  const utc2 = d2.getTime();
+  
+  // Math.abs ensures it calculates the gap even if dates are entered backwards
+  const diffTime = Math.abs(utc2 - utc1);
+  return Math.round(diffTime / (1000 * 60 * 60 * 24));
 };
 
 const WorkFlowStatus = ({ workCases }) => {
