@@ -1,15 +1,16 @@
 // src/pages/Circulars.jsx
 const CIRCULARS_DATA = [
+
   {
     id: 1,
-    title: 'SCC C&M Circular',
-    description: 'Updated procurement procedures and approval limits',
-    link: 'https://10.0.8.168/cs/csind.php', // Fixed: removed leading slash
-    gradient: 'from-blue-500 to-indigo-600',
-    bg: 'bg-blue-50',
-    text: 'text-blue-600',
-    border: 'border-blue-100',
-    hoverBorder: 'hover:border-blue-300',
+    title: 'USSC Circular',
+    description: 'Revised vendor registration and empanelment process',
+    link: '/pdf/USSC_Circular.pdf', 
+    gradient: 'from-emerald-500 to-teal-600',
+    bg: 'bg-yellow-50',
+    text: 'text-emerald-600',
+    border: 'border-emerald-100',
+    hoverBorder: 'hover:border-emerald-300',
     icon: (
       <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -18,9 +19,105 @@ const CIRCULARS_DATA = [
   },
   {
     id: 2,
-    title: 'USSC Circular',
+    title: 'Gem Custombid',
     description: 'Revised vendor registration and empanelment process',
-    link: 'https://sangam.ntpc.co.in/V2/Portal/Department/58', // Fixed: removed leading slash
+    link: '/pdf/GEMcustombid.pdf', 
+    gradient: 'from-emerald-500 to-teal-600',
+    bg: 'bg-emerald-50',
+    text: 'text-emerald-600',
+    border: 'border-emerald-100',
+    hoverBorder: 'hover:border-emerald-300',
+    icon: (
+      <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+      </svg>
+    ),
+  },
+  {
+    id: 3,
+    title: 'T Code Form M',
+    description: 'Revised vendor registration and empanelment process',
+    link: '/pdf/tcodeformm.pdf', 
+    gradient: 'from-emerald-500 to-teal-600',
+    bg: 'bg-emerald-50',
+    text: 'text-emerald-600',
+    border: 'border-emerald-100',
+    hoverBorder: 'hover:border-emerald-300',
+    icon: (
+      <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+      </svg>
+    ),
+  },
+  {
+    id: 4,
+    title: 'Gcc Civil Work',
+    description: 'Revised vendor registration and empanelment process',
+    link: '/pdf/gccforcivilwork.pdf', 
+    gradient: 'from-emerald-500 to-teal-600',
+    bg: 'bg-emerald-50',
+    text: 'text-emerald-600',
+    border: 'border-emerald-100',
+    hoverBorder: 'hover:border-emerald-300',
+    icon: (
+      <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+      </svg>
+    ),
+  },
+  {
+    id: 5,
+    title: 'General Purchase Conditions',
+    description: 'Revised vendor registration and empanelment process',
+    link: '/pdf/generalpurchaseconditions.pdf', 
+    gradient: 'from-emerald-500 to-teal-600',
+    bg: 'bg-emerald-50',
+    text: 'text-emerald-600',
+    border: 'border-emerald-100',
+    hoverBorder: 'hover:border-emerald-300',
+    icon: (
+      <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+      </svg>
+    ),
+  },
+  {
+    id: 6,
+    title: 'Material Contracts',
+    description: 'Gcc For C&M Contracts',
+    link: '/pdf/gccforo&mcontracts.pdf', 
+    gradient: 'from-emerald-500 to-teal-600',
+    bg: 'bg-emerald-50',
+    text: 'text-emerald-600',
+    border: 'border-emerald-100',
+    hoverBorder: 'hover:border-emerald-300',
+    icon: (
+      <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+      </svg>
+    ),
+  },
+  {
+    id: 7,
+    title: 'Terms_Condition',
+    description: 'Terms_Condition for Vehicle-12 Hours',
+    link: '/pdf/Terms_Condition_Vehicle.docx', 
+    gradient: 'from-emerald-500 to-teal-600',
+    bg: 'bg-emerald-50',
+    text: 'text-emerald-600',
+    border: 'border-emerald-100',
+    hoverBorder: 'hover:border-emerald-300',
+    icon: (
+      <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+      </svg>
+    ),
+  },
+  {
+    id: 8,
+    title: 'Sample Calculation Sheet',
+    description: '',
+    link: '/pdf/Sample_Calculation_Sheet.xlsx', 
     gradient: 'from-emerald-500 to-teal-600',
     bg: 'bg-emerald-50',
     text: 'text-emerald-600',

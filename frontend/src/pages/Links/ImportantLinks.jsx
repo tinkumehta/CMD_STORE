@@ -110,6 +110,16 @@ const LINKS_DATA = [
     border: 'border-pink-100',
     hoverBorder: 'hover:border-pink-300',
   },
+    {
+    id: 1,
+    title: 'SCC C&M Circular',
+    url: 'https://10.0.8.168/cs/csind.php', 
+    gradient: 'from-blue-500 to-indigo-600',
+    bg: 'bg-blue-50',
+    text: 'text-blue-600',
+    border: 'border-blue-100',
+    hoverBorder: 'hover:border-blue-300',
+  },
 ];
 
 const ImportantLinks = () => {
