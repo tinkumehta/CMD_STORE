@@ -31,7 +31,7 @@ const Header = () => {
       {/* Top Tier: Logos & Auth */}
       <div className="w-full bg-white px-6 py-3 flex justify-between items-center border-b border-gray-100">
         <Link to="/">
-          <img src="/ntpc-logo.png" alt="NTPC" className="w-22 object-contain" />
+          <img src="/nml-logo.png" alt="NML" className="w-22 object-contain" />
         </Link>
 
         <h1 className="text-center leading-tight">
@@ -44,7 +44,7 @@ const Header = () => {
         </h1>
 
         <div className="flex flex-col items-center gap-1.5">
-          <img src="/nml_logo.png" alt="NML" className="w-24 object-contain" />
+          <img src="/ntpc_logo.png" alt="NTPC" className="w-24 object-contain" />
           <div className="flex gap-1.5">
             {user ? (
               <>

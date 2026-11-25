@@ -62,8 +62,8 @@ const Topbar = () => {
       <div className="absolute top-20 right-4 md:right-2 z-10 flex items-center gap-3">
         <div className="rounded-lg px-4 py-2 flex items-center justify-center">
           <img
-            src="/nml-logo.png"
-            alt="NML Logo"
+            src="https://kseboa.org/oa_uploads/2020/01/ntpc-logo-696x442.jpg"
+            alt="NTPC Logo"
             className="h-10 md:h-14 w-50 object-contain drop-shadow-md "
           />
         </div>

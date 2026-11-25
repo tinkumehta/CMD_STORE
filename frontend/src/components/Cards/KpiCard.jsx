@@ -8,6 +8,8 @@ const TONES = {
     iconBg: 'bg-blue-100',
     iconTx: 'text-blue-900',
     stroke: '#173461',
+    
+    
   },
   purple: {
     grad: 'from-purple-400 to-white',
@@ -34,7 +36,7 @@ const KpiCard = ({
   value,
   icon,
   change,
-  subtitle = 'vs. last month',
+  subtitle = '',
   tone = 'blue',
 }) => {
   const t = TONES[tone] || TONES.blue;
@@ -53,7 +55,7 @@ const KpiCard = ({
               {icon}
             </div>
 
-            <span className="text-xs text-gray-600 font-medium truncate">
+            <span className="text-sm text-black font-bold  truncate">
               {title}
             </span>
           </div>

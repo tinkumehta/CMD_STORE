@@ -35,9 +35,9 @@ const CIRCULARS_DATA = [
   },
   {
     id: 3,
-    title: 'T Code Form M',
-    description: 'Revised vendor registration and empanelment process',
-    link: '/pdf/tcodeformm.pdf', 
+    title: 'SSC-C&M',
+    description: '',
+    link: 'https://sangam.ntpc.co.in/V2/Portal/Department/58', 
     gradient: 'from-emerald-500 to-teal-600',
     bg: 'bg-emerald-50',
     text: 'text-emerald-600',
@@ -51,9 +51,9 @@ const CIRCULARS_DATA = [
   },
   {
     id: 4,
-    title: 'Gcc Civil Work',
+    title: 'T Code Form MM',
     description: 'Revised vendor registration and empanelment process',
-    link: '/pdf/gccforcivilwork.pdf', 
+    link: '/pdf/tcodeformm.pdf', 
     gradient: 'from-emerald-500 to-teal-600',
     bg: 'bg-emerald-50',
     text: 'text-emerald-600',
@@ -83,41 +83,9 @@ const CIRCULARS_DATA = [
   },
   {
     id: 6,
-    title: 'Material Contracts',
-    description: 'Gcc For C&M Contracts',
-    link: '/pdf/gccforo&mcontracts.pdf', 
-    gradient: 'from-emerald-500 to-teal-600',
-    bg: 'bg-emerald-50',
-    text: 'text-emerald-600',
-    border: 'border-emerald-100',
-    hoverBorder: 'hover:border-emerald-300',
-    icon: (
-      <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-      </svg>
-    ),
-  },
-  {
-    id: 7,
     title: 'Terms_Condition',
     description: 'Terms_Condition for Vehicle-12 Hours',
     link: '/pdf/Terms_Condition_Vehicle.docx', 
-    gradient: 'from-emerald-500 to-teal-600',
-    bg: 'bg-emerald-50',
-    text: 'text-emerald-600',
-    border: 'border-emerald-100',
-    hoverBorder: 'hover:border-emerald-300',
-    icon: (
-      <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-      </svg>
-    ),
-  },
-  {
-    id: 8,
-    title: 'Sample Calculation Sheet',
-    description: '',
-    link: '/pdf/Sample_Calculation_Sheet.xlsx', 
     gradient: 'from-emerald-500 to-teal-600',
     bg: 'bg-emerald-50',
     text: 'text-emerald-600',

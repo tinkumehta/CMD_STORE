@@ -6,13 +6,30 @@ export const getPlantGroup = (code) => {
   return c || 'Unknown';
 };
 
+export const getFiscalYear = (dateStr) => {
+  if (!dateStr) return 'Unknown';
+  const date = new Date(dateStr);
+  if (isNaN(date.getTime())) return 'Unknown';
+  
+  const year = date.getFullYear();
+  const month = date.getMonth(); // 0-indexed (Jan = 0, Mar = 2, Apr = 3)
+  
+  // Indian FY starts in April (month 3)
+  if (month >= 3) {
+    return `FY ${year} - ${year + 1}`;
+  } else {
+    return `FY ${year - 1} - ${year}`;
+  }
+};
+
 export const CHART_CONFIGS = [
   {
     id: 'plant-group',
-    title: 'Order Plant Group',
+    title: 'PO Dashboard',
     subtitle: 'CBCMP vs KDCMP',
     icon: '🏭',
-    color: '#3B82F6',
+    color: 'black',
+    
     getData: (pos) => {
       const counts = {};
       pos.forEach((po) => {
@@ -96,3 +113,4 @@ export const CHART_CONFIGS = [
     filterPOs: (pos, selection) => pos, // Optional filter logic
   },
 ];
+

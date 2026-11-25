@@ -100,3 +100,36 @@ CREATE TABLE work_cases (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ); 
 
+-- 1. Material PO Master Table (Only 10 essential columns)
+CREATE TABLE material_pos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    po_number VARCHAR(20) NOT NULL,
+    item_no INT NOT NULL,
+    plant VARCHAR(20),
+    material_code VARCHAR(50),
+    short_text TEXT,
+    po_date DATE,
+    supplier_name VARCHAR(255),
+    order_qty DECIMAL(12, 2) DEFAULT 0,
+    net_order_value DECIMAL(15, 2) DEFAULT 0,
+    pending_delivery_value DECIMAL(15, 2) DEFAULT 0,
+    pending_invoice_value DECIMAL(15, 2) DEFAULT 0,
+    UNIQUE KEY unique_po_item (po_number, item_no),
+    INDEX idx_mat_po (po_number),
+    INDEX idx_mat_date (po_date)
+);
+
+-- 2. Payment Status Table (Only 9 essential columns)
+CREATE TABLE payment_statuses (
+    document_number VARCHAR(30) PRIMARY KEY,
+    po_number VARCHAR(20) NOT NULL,
+    po_document_date DATE,
+    vendor_name VARCHAR(255),
+    invoice_reference VARCHAR(100),
+    gross_invoice_amount DECIMAL(15, 2) DEFAULT 0,
+    document_status VARCHAR(50), -- 'Blocked' = Officially Completed
+    posting_date DATE,
+    fiscal_year INT,
+    INDEX idx_pay_po (po_number),
+    INDEX idx_pay_post_date (posting_date)
+);

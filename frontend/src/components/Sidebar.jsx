@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import {
   LayoutDashboard, Info, Folder, Link as LinkIcon,
   FileText, TrendingUp, Database, BookOpen, ChevronRight,
-  Upload,CalendarArrowDown
+  Upload, CalendarArrowDown
 } from 'lucide-react';
 
 const MENU = [
@@ -18,12 +18,7 @@ const MENU = [
   { name: 'Coal Mining Links', path: '/coal-mining-links', icon: LinkIcon, iconBg: 'bg-teal-500/90', iconColor: 'text-white' },
   { name: 'Manuals & Standards', path: '/manuals', icon: BookOpen, iconBg: 'bg-indigo-500/90', iconColor: 'text-white' },
   { name: 'Events', path: '/events', icon: CalendarArrowDown, iconBg: 'bg-rose-500/90', iconColor: 'text-white' },
-  // Inside your MENU array in Sidebar.jsx
-{ 
-  name: 'Live Work Status', 
-  path: '/live-work-status', 
-  icon: LayoutDashboard // or any other icon
-}
+  { name: 'Live Work Status', path: '/live-work-status', icon: LayoutDashboard, iconBg: 'bg-blue-400/90', iconColor: 'text-white' }
 ];
 
 const Sidebar = () => {
@@ -67,9 +62,9 @@ const Sidebar = () => {
         <div className="flex items-center justify-center pt-6 pb-4 shrink-0">
           <div className="bg-white rounded-2xl px-4 py-3 shadow-[0_0_30px_rgba(59,130,246,0.4)] border-2 border-white/30">
             <img
-              src="/ntpc_logo.jpg"
-              alt="NTPC Logo"
-              className="w-20 h-auto object-contain"
+              src="https://companieslogo.com/img/orig/NTPC.NS-2417ca8e.png?t=1746002638"
+              alt="NML Logo"
+              className="w-25 h-auto object-contain"
             />
           </div>
         </div>
@@ -96,9 +91,6 @@ const Sidebar = () => {
                   }`
                 }
               >
-                {/* Left accent bar on active */}
-                {({ isActive }) => null}
-
                 {/* Icon box */}
                 <div className={`w-9 h-9 rounded-xl ${item.iconBg} flex items-center justify-center shrink-0 shadow-lg border border-white/20`}>
                   <item.icon size={16} className={item.iconColor} />
@@ -123,37 +115,52 @@ const Sidebar = () => {
             {/* ===================== ADMIN UPLOAD ===================== */}
             {(user?.role === 'admin' || true) && (
               <>
-              <NavLink
-                to="/upload"
-                className={({ isActive }) =>
-                  `group flex items-center gap-3 px-3 py-2.5 text-sm rounded-2xl transition-all duration-300 ${
-                    isActive
-                      ? 'bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 text-white font-bold shadow-[0_0_20px_rgba(59,130,246,0.6)] border border-blue-400/60'
-                      : 'text-gray-100 hover:bg-white/5'
-                  }`
-                }
-              >
-                <div className="w-9 h-9 rounded-xl bg-blue-500/90 flex items-center justify-center shrink-0 shadow-lg border border-white/20">
-                  <Upload size={16} className="text-white" />
-                </div>
-                <span className="truncate flex-1 text-left text-[13px] font-semibold">
-                  Admin Upload
-                </span>
-                <ChevronRight size={16} className="ml-auto opacity-70 group-hover:translate-x-0.5 transition-transform shrink-0" />
-              </NavLink>
-               <NavLink
-                to="/upload-work-status"
-               className={({ isActive }) =>
-                 `flex items-center gap-3 mx-2 px-3 py-2.5 text-sm rounded-lg transition-all ${
-                   isActive ? 'bg-blue-600 text-white font-semibold' : 'text-gray-100 hover:bg-white/10'
-                 }`
-               }
-             >  
-               <Upload size={18} />
-               <span className="truncate">Upload Work Status</span>
-             </NavLink>
+                {/* 1. Admin Upload (POs) */}
+                <NavLink
+                  to="/upload"
+                  className={({ isActive }) =>
+                    `group flex items-center gap-3 px-3 py-2.5 text-sm rounded-2xl transition-all duration-300 ${
+                      isActive
+                        ? 'bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 text-white font-bold shadow-[0_0_20px_rgba(59,130,246,0.6)] border border-blue-400/60'
+                        : 'text-gray-100 hover:bg-white/5'
+                    }`
+                  }
+                >
+                  <div className="w-9 h-9 rounded-xl bg-blue-500/90 flex items-center justify-center shrink-0 shadow-lg border border-white/20">
+                    <Upload size={16} className="text-white" />
+                  </div>
+                  <span className="truncate flex-1 text-left text-[13px] font-semibold">
+                    Admin Upload
+                  </span>
+                  <ChevronRight size={16} className="ml-auto opacity-70 group-hover:translate-x-0.5 transition-transform shrink-0" />
+                </NavLink>
+
+                {/* 2. Upload Work Status */}
+                <NavLink
+                  to="/upload-work-status"
+                  className={({ isActive }) =>
+                    `flex items-center gap-3 mx-2 px-3 py-2.5 text-sm rounded-lg transition-all ${
+                      isActive ? 'bg-blue-600 text-white font-semibold' : 'text-gray-100 hover:bg-white/10'
+                    }`
+                  }
+                >  
+                  <Upload size={18} />
+                  <span className="truncate">Upload Work Status</span>
+                </NavLink>
+
+                {/* 3. NEW: Upload Material & Payment Data */}
+                <NavLink
+                  to="/upload-material-data"
+                  className={({ isActive }) =>
+                    `flex items-center gap-3 mx-2 px-3 py-2.5 text-sm rounded-lg transition-all ${
+                      isActive ? 'bg-emerald-600 text-white font-semibold' : 'text-gray-100 hover:bg-white/10'
+                    }`
+                  }
+                >  
+                  <Database size={18} />
+                  <span className="truncate">Upload Material Data</span>
+                </NavLink>
               </>
-              
             )}
 
           </div>

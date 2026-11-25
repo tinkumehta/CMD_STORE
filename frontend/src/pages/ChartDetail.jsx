@@ -2,12 +2,10 @@
 import { useEffect, useState, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { poApi } from '../api/poApi';
-import { CHART_CONFIGS, getPlantGroup } from '../config/charts';
+import { CHART_CONFIGS, getPlantGroup, getFiscalYear } from '../config/charts';
 import DonutChart from '../components/PieChart/DonutChart';
 
-const formatCurrency = (n) =>
-  '₹ ' + (Number(n) || 0).toLocaleString('en-IN', { maximumFractionDigits: 2 });
-
+const formatCurrency = (n) => '₹ ' + (Number(n) || 0).toLocaleString('en-IN', { maximumFractionDigits: 2 });
 const formatDate = (d) => {
   if (!d) return '—';
   const dt = new Date(d);
@@ -15,26 +13,13 @@ const formatDate = (d) => {
   return dt.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
 };
 
-// ------------------------------------------------------------
-// Helpers for the multi-level Plant Group drill-down
-// ------------------------------------------------------------
-const buildPlantGroupCounts = (pos) => {
+// --- Builders for Plant Code Drill-down ---
+const buildPlantCodeCounts = (pos) => {
   const counts = {};
   pos.forEach((po) => {
-    const g = getPlantGroup(po.ord_plant);
-    if (g && g !== 'Unknown') counts[g] = (counts[g] || 0) + 1;
+    const code = String(po.ord_plant || '').trim();
+    if (code && code !== 'Unknown') counts[code] = (counts[code] || 0) + 1;
   });
-  return { labels: Object.keys(counts), data: Object.values(counts) };
-};
-
-const buildPlantCodeCounts = (pos, group) => {
-  const counts = {};
-  pos
-    .filter((po) => getPlantGroup(po.ord_plant) === group)
-    .forEach((po) => {
-      const code = String(po.ord_plant || '').trim();
-      if (code && code !== 'Unknown') counts[code] = (counts[code] || 0) + 1;
-    });
   return { labels: Object.keys(counts), data: Object.values(counts) };
 };
 
@@ -51,25 +36,18 @@ const buildEnqTypeCounts = (pos, plantCode) => {
   return { labels: Object.keys(counts), data: Object.values(counts) };
 };
 
-// ------------------------------------------------------------
-// Main Component
-// ------------------------------------------------------------
 const ChartDetail = () => {
   const { chartId } = useParams();
   const navigate = useNavigate();
   const [allPos, setAllPos] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Drill-down states (only used for plant-group chart)
-  const [selectedGroup, setSelectedGroup] = useState(null);   // 'CBCMP' | 'KDCMP'
-  const [selectedPlantCode, setSelectedPlantCode] = useState(null); // '1079' | '2401'
-  const [selectedEnqType, setSelectedEnqType] = useState(null);      // 'LTE' | 'STE'
-
-  // Generic filter state (for non-plant-group charts)
-  const [selectedLabel, setSelectedLabel] = useState(null);
+  // States
+  const [selectedFY, setSelectedFY] = useState(null);
+  const [selectedPlantCode, setSelectedPlantCode] = useState(null);
+  const [selectedEnqType, setSelectedEnqType] = useState(null);
 
   const config = CHART_CONFIGS.find((c) => c.id === chartId);
-  const isPlantGroupChart = chartId === 'plant-group';
 
   // ---------- Fetch ----------
   useEffect(() => {
@@ -88,143 +66,101 @@ const ChartDetail = () => {
 
   // ---------- Reset state when chartId changes ----------
   useEffect(() => {
-    setSelectedGroup(null);
+    setSelectedFY(null);
     setSelectedPlantCode(null);
     setSelectedEnqType(null);
-    setSelectedLabel(null);
   }, [chartId]);
 
-  // ---------- Chart data (plant-group = multi-level) ----------
+  // ---------- Extract Available Fiscal Years ----------
+  const availableFYs = useMemo(() => {
+    const years = new Set();
+    allPos.forEach((po) => {
+      const fy = getFiscalYear(po.date);
+      if (fy !== 'Unknown') years.add(fy);
+    });
+    return Array.from(years).sort().reverse(); // Newest first
+  }, [allPos]);
+
+  // ---------- Filter data by Fiscal Year ----------
+  const fyFilteredPos = useMemo(() => {
+    if (!selectedFY) return allPos;
+    return allPos.filter((po) => getFiscalYear(po.date) === selectedFY);
+  }, [allPos, selectedFY]);
+
+  // ---------- Chart data ----------
   const chartData = useMemo(() => {
     if (!config?.getData) return { labels: [], data: [] };
 
-    // Special multi-level logic for plant-group
-    if (isPlantGroupChart) {
-      // Level 1: KDCMP / CBCMP
-      if (!selectedGroup) return buildPlantGroupCounts(allPos);
+    // If NO FY is selected, show a preview of the chart (or empty)
+    if (!selectedFY) return { labels: [], data: [] };
 
-      // Level 2: 1079 / 2401 (within selected group)
-      if (!selectedPlantCode) return buildPlantCodeCounts(allPos, selectedGroup);
+    // Level 1: Plant Codes for the selected FY
+    if (!selectedPlantCode) return buildPlantCodeCounts(fyFilteredPos);
 
-      // Level 3: LTE / STE / OTE (within selected plant code)
-      if (!selectedEnqType) return buildEnqTypeCounts(allPos, selectedPlantCode);
+    // Level 2: Enquiry Types for the selected Plant Code
+    if (!selectedEnqType) return buildEnqTypeCounts(fyFilteredPos, selectedPlantCode);
 
-      // Level 4: show only the clicked enq type as a single slice
-      const enqCounts = buildEnqTypeCounts(allPos, selectedPlantCode);
-      const matchIdx = enqCounts.labels.indexOf(selectedEnqType);
-      if (matchIdx >= 0) {
-        return {
-          labels: [enqCounts.labels[matchIdx]],
-          data: [enqCounts.data[matchIdx]],
-        };
-      }
-      return { labels: [], data: [] };
+    // Level 3: Show the clicked Enq Type
+    const enqCounts = buildEnqTypeCounts(fyFilteredPos, selectedPlantCode);
+    const matchIdx = enqCounts.labels.indexOf(selectedEnqType);
+    if (matchIdx >= 0) {
+      return { labels: [enqCounts.labels[matchIdx]], data: [enqCounts.data[matchIdx]] };
     }
-
-    // Default single-level for other charts
-    return config.getData(allPos);
-  }, [config, allPos, isPlantGroupChart, selectedGroup, selectedPlantCode, selectedEnqType]);
+    return { labels: [], data: [] };
+  }, [config, fyFilteredPos, selectedFY, selectedPlantCode, selectedEnqType]);
 
   // ---------- Filtered POs (final table) ----------
   const filteredPOs = useMemo(() => {
-    if (isPlantGroupChart) {
-      if (!selectedEnqType) return [];
-      return allPos.filter((po) => {
-        const matchesGroup = getPlantGroup(po.ord_plant) === selectedGroup;
-        const matchesCode = String(po.ord_plant).trim() === String(selectedPlantCode).trim();
-        const matchesEnq = String(po.enq_type || '').trim() === selectedEnqType;
-        return matchesGroup && matchesCode && matchesEnq;
-      });
-    }
+    if (!selectedEnqType) return [];
+    return fyFilteredPos.filter((po) => {
+      const matchesCode = String(po.ord_plant).trim() === String(selectedPlantCode).trim();
+      const matchesEnq = String(po.enq_type || '').trim() === selectedEnqType;
+      return matchesCode && matchesEnq;
+    });
+  }, [fyFilteredPos, selectedPlantCode, selectedEnqType]);
 
-    if (!selectedLabel || !config?.filterPOs) return [];
-    return config.filterPOs(allPos, selectedLabel);
-  }, [config, allPos, isPlantGroupChart, selectedGroup, selectedPlantCode, selectedEnqType, selectedLabel]);
-
-  // ---------- Handle chart slice click ----------
+  // ---------- Handlers ----------
   const handleChartClick = (label) => {
-    if (isPlantGroupChart) {
-      if (!selectedGroup) {
-        setSelectedGroup(label); // Level 1 → Level 2
-      } else if (!selectedPlantCode) {
-        setSelectedPlantCode(label); // Level 2 → Level 3
-      } else if (!selectedEnqType) {
-        setSelectedEnqType(label); // Level 3 → Level 4 (table)
-      }
-      return;
+    if (!selectedFY) return; // Must select FY first
+    if (!selectedPlantCode) {
+      setSelectedPlantCode(label); // Clicked a Plant Code
+    } else if (!selectedEnqType) {
+      setSelectedEnqType(label); // Clicked an Enq Type
     }
-
-    // Default behavior for other charts
-    setSelectedLabel((prev) => (prev === label ? null : label));
   };
 
-  // ---------- Reset one level back ----------
   const handleBack = () => {
-    if (isPlantGroupChart) {
-      if (selectedEnqType) setSelectedEnqType(null);
-      else if (selectedPlantCode) setSelectedPlantCode(null);
-      else if (selectedGroup) setSelectedGroup(null);
-      return;
-    }
-    setSelectedLabel(null);
+    if (selectedEnqType) setSelectedEnqType(null);
+    else if (selectedPlantCode) setSelectedPlantCode(null);
+    else if (selectedFY) setSelectedFY(null);
   };
 
-  // ---------- Reset all the way ----------
   const handleResetAll = () => {
-    setSelectedGroup(null);
+    setSelectedFY(null);
     setSelectedPlantCode(null);
     setSelectedEnqType(null);
-    setSelectedLabel(null);
   };
 
   // ---------- Chart title & subtitle ----------
   const getChartTitle = () => {
-    if (!isPlantGroupChart) return config?.title || '';
-
-    if (!selectedGroup) return 'Order Plant Group';
-    if (!selectedPlantCode) return `Plant Codes · ${selectedGroup}`;
+    if (!selectedFY) return 'Select a Fiscal Year';
+    if (!selectedPlantCode) return `Plant Codes · ${selectedFY}`;
     if (!selectedEnqType) return `Enquiry Types · Plant ${selectedPlantCode}`;
     return `${selectedEnqType} · Plant ${selectedPlantCode}`;
   };
 
   const getChartSubtitle = () => {
-    if (!isPlantGroupChart) {
-      return selectedLabel ? `Filtered by: ${selectedLabel}` : config?.subtitle || '';
-    }
-
-    if (!selectedGroup) return 'Click a group to view plant codes (CBCMP / KDCMP)';
-    if (!selectedPlantCode)
-      return `Click a plant code (1079, 2401, etc.) to view enquiry types`;
+    if (!selectedFY) return 'Choose a year to begin drill-down';
+    if (!selectedPlantCode) return 'Click a plant code to view enquiry types';
     if (!selectedEnqType) return 'Click an enquiry type to view all POs';
     return `${filteredPOs.length} POs found`;
   };
 
-  // ---------- Breadcrumb path ----------
-  const breadcrumb = [];
-  if (isPlantGroupChart) {
-    breadcrumb.push({ label: 'All Groups', onClick: () => {} });
-    if (selectedGroup) breadcrumb.push({ label: selectedGroup, onClick: () => {
-      setSelectedPlantCode(null);
-      setSelectedEnqType(null);
-    }});
-    if (selectedPlantCode) breadcrumb.push({ label: selectedPlantCode, onClick: () => {
-      setSelectedEnqType(null);
-    }});
-    if (selectedEnqType) breadcrumb.push({ label: selectedEnqType, onClick: () => {} });
-  }
-
-  const showBackButton = isPlantGroupChart
-    ? selectedGroup || selectedPlantCode || selectedEnqType
-    : selectedLabel;
-
-  // ---------- Not Found ----------
   if (!config) {
     return (
       <div className="p-10 text-center">
         <h1 className="text-lg font-bold text-gray-800">Chart not found</h1>
-        <button onClick={() => navigate('/')} className="mt-4 text-blue-600 underline">
-          Back to Dashboard
-        </button>
+        <button onClick={() => navigate('/')} className="mt-4 text-blue-600 underline">Back to Dashboard</button>
       </div>
     );
   }
@@ -234,87 +170,69 @@ const ChartDetail = () => {
       {/* Header */}
       <div className="flex items-start justify-between mb-5 flex-wrap gap-3">
         <div>
-          <button
-            onClick={() => navigate('/')}
-            className="flex items-center gap-2 text-xs text-white bg-linear-to-r from-[#1717B0] to-[#34BDD9] px-3 py-1.5 rounded-full border border-gray-200 shadow-sm w-fit mb-5"
-          >
+          <button onClick={() => navigate('/')} className="flex items-center gap-2 text-xs text-white bg-linear-to-r from-[#1717B0] to-[#34BDD9] px-3 py-1.5 rounded-full shadow-sm w-fit mb-5">
             ← Back to Dashboard
           </button>
-          <div className="flex items-center gap-2 text-xs text-black bg-linear-to-r from-[#95F5BD] to-[#E8DF8B] px-3 py-1.5 rounded-full border border-gray-200 shadow-sm w-fit mb-5">
-          <h1 className="text-xl font-bold ">{getChartTitle()}</h1>
-          <br/>
-          <p className="text-xs  mt-0.5">{getChartSubtitle()}</p>
+          <div className="flex items-center gap-2 text-xs text-black bg-linear-to-r from-[#95F5BD] to-[#E8DF8B] px-3 py-1.5 rounded-full shadow-sm w-fit mb-5">
+            <h1 className="text-xl font-bold">{getChartTitle()}</h1>
+            <br/>
+            <p className="text-xs mt-0.5">{getChartSubtitle()}</p>
           </div>
-
-          {/* Breadcrumb */}
-          {isPlantGroupChart && breadcrumb.length > 1 && (
-            <div className="flex items-center gap-1.5 mt-2 text-[11px] bg-linear-to-r from-[#DAB3F5] to-[#F7C988] px-3 py-1.5 rounded-full border border-gray-200 shadow-sm w-fit mb-5">
-              {breadcrumb.map((b, i) => (
-                <span key={i} className="flex items-center gap-1.5">
-                  {i > 0 && <span className="text-black">›</span>}
-                  <button
-                    onClick={b.onClick}
-                    className={`font-semibold hover:underline ${
-                      i === breadcrumb.length - 1
-                        ? 'text-black'
-                        : 'text-black hover:black'
-                    }`}
-                  >
-                    {b.label}
-                  </button>
-                </span>
-              ))}
-            </div>
-          )}
         </div>
 
         <div className="flex items-center gap-2">
-          {showBackButton && (
-            <button
-              onClick={handleBack}
-              className="px-4 py-2 text-xs bg-gray-600 text-white rounded-full font-bold hover:bg-black transition"
-            >
-              ← Back
-            </button>
+          {(selectedFY || selectedPlantCode || selectedEnqType) && (
+            <button onClick={handleBack} className="px-4 py-2 text-xs bg-gray-600 text-white rounded-full font-bold hover:bg-black transition">← Back</button>
           )}
-          {showBackButton && (
-            <button
-              onClick={handleResetAll}
-              className="px-4 py-2 text-xs bg-black text-white rounded-full font-bold hover:bg-gray-700 transition"
-            >
-              Reset All
-            </button>
+          {(selectedFY || selectedPlantCode || selectedEnqType) && (
+            <button onClick={handleResetAll} className="px-4 py-2 text-xs bg-black text-white rounded-full font-bold hover:bg-gray-700 transition">Reset All</button>
           )}
         </div>
+      </div>
+
+      {/* NEW: Fiscal Year Filter Buttons */}
+      <div className="flex flex-wrap items-center gap-2 mb-6">
+        <span className="text-xs font-bold text-gray-600 mr-2">Filter by Fiscal Year:</span>
+        {availableFYs.map((fy) => (
+          <button
+            key={fy}
+            onClick={() => {
+              setSelectedFY(fy);
+              setSelectedPlantCode(null);
+              setSelectedEnqType(null);
+            }}
+            className={`px-4 py-2 rounded-full text-xs font-bold transition-all shadow-sm ${
+              selectedFY === fy
+                ? 'bg-indigo-600 text-white border-indigo-700 shadow-md scale-105'
+                : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
+            }`}
+          >
+            {fy}
+          </button>
+        ))}
       </div>
 
       {/* Chart */}
       <div className="bg-gray-100 rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
         {loading ? (
-          <div className="h-72 flex items-center justify-center text-gray-400">
-            Loading chart…
+          <div className="h-72 flex items-center justify-center text-gray-400">Loading chart…</div>
+        ) : !selectedFY ? (
+          <div className="h-72 flex flex-col items-center justify-center text-gray-500">
+            <p className="text-lg font-bold">Select a Fiscal Year above to load data</p>
           </div>
         ) : (
-          <DonutChart
-            labels={chartData.labels}
-            data={chartData.data}
-            onClick={handleChartClick}
-          />
+          <DonutChart labels={chartData.labels} data={chartData.data} onClick={handleChartClick} />
         )}
       </div>
 
-      {/* Filtered Table (only shows at final level) */}
+      {/* Filtered Table */}
       {filteredPOs.length > 0 && (
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
           <div className="p-4 border-b border-gray-100 flex items-center justify-between">
             <h2 className="text-sm font-bold text-gray-800">
-              {isPlantGroupChart
-                ? `${selectedEnqType} POs · Plant ${selectedPlantCode} · `
-                : `${selectedLabel} POs · `}
-              <span className="text-blue-600">{filteredPOs.length}</span>
+              {selectedEnqType} POs · Plant {selectedPlantCode} · <span className="text-blue-600">{filteredPOs.length}</span>
             </h2>
           </div>
-
           <div className="overflow-x-auto max-h-[600px] overflow-y-auto">
             <table className="w-full text-left text-xs">
               <thead className="bg-gray-50 text-gray-500 uppercase text-[10px] sticky top-0 z-10">
@@ -331,41 +249,20 @@ const ChartDetail = () => {
               <tbody className="divide-y divide-gray-100">
                 {filteredPOs.map((po) => (
                   <tr key={po.id} className="hover:bg-blue-50/40 transition">
-                    <td className="px-4 py-2.5 font-mono font-bold text-[#0b3d91]">
-                      {po.po_no}
-                    </td>
-                    <td className="px-4 py-2.5 text-gray-700 truncate max-w-[140px]">
-                      {po.creator_name || '—'}
-                    </td>
-                    <td className="px-4 py-2.5 text-gray-700 truncate max-w-[180px]">
-                      {po.agency || '—'}
-                    </td>
-                    <td className="px-4 py-2.5 text-right font-semibold">
-                      {formatCurrency(po.value_inr)}
-                    </td>
+                    <td className="px-4 py-2.5 font-mono font-bold text-[#0b3d91]">{po.po_no}</td>
+                    <td className="px-4 py-2.5 text-gray-700 truncate max-w-[140px]">{po.creator_name || '—'}</td>
+                    <td className="px-4 py-2.5 text-gray-700 truncate max-w-[180px]">{po.agency || '—'}</td>
+                    <td className="px-4 py-2.5 text-right font-semibold">{formatCurrency(po.value_inr)}</td>
                     <td className="px-4 py-2.5 text-center">
-                      <span className="px-2 py-0.5 bg-blue-50 text-blue-700 rounded-full text-[10px] font-bold border border-blue-100">
-                        {po.enq_type || '—'}
-                      </span>
+                      <span className="px-2 py-0.5 bg-blue-50 text-blue-700 rounded-full text-[10px] font-bold border border-blue-100">{po.enq_type || '—'}</span>
                     </td>
-                    <td className="px-4 py-2.5 text-center font-semibold">
-                      {po.ord_plant || '—'}
-                    </td>
-                    <td className="px-4 py-2.5 text-gray-500 whitespace-nowrap">
-                      {formatDate(po.date)}
-                    </td>
+                    <td className="px-4 py-2.5 text-center font-semibold">{po.ord_plant || '—'}</td>
+                    <td className="px-4 py-2.5 text-gray-500 whitespace-nowrap">{formatDate(po.date)}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-        </div>
-      )}
-
-      {/* Empty hint when no POs found at final level */}
-      {isPlantGroupChart && selectedEnqType && filteredPOs.length === 0 && (
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 text-center text-gray-400">
-          No POs found for {selectedEnqType} at plant {selectedPlantCode}
         </div>
       )}
     </div>

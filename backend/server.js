@@ -8,6 +8,8 @@ import poRoutes from './routes/purchaseOrder.route.js';
 import statsRoutes from './routes/stats.route.js';
 import adminRoutes from './routes/admin.route.js';
 import workCaseRoutes from './routes/workCase.route.js'
+import materialPoRoutes from './routes/materialPo.route.js';
+import paymentStatusRoutes from './routes/paymentStatus.route.js';
 
 dotenv.config();
 
@@ -21,6 +23,8 @@ app.use('/api/purchase-orders', poRoutes);
 app.use('/api/stats', statsRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/work-cases', workCaseRoutes); 
+app.use('/api/material-pos', materialPoRoutes);
+app.use('/api/payment-statuses', paymentStatusRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'OK' });

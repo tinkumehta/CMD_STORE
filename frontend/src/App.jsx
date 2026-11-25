@@ -16,9 +16,12 @@ import ProtectedRoute from './components/ProtectedRoute';
 import UploadPage from './pages/UploadPage';
 import ExternalLinks from './pages/Links/ExternalLinks';
 import CoalMiningLinks from './pages/Links/CoalMiningLinks';
-import ChartDetail from './pages/ChartDetail';   // ← NEW
+import ChartDetail from './pages/ChartDetail';  
 import LiveWorkStatus from './pages/Live_Po/LiveWorkStatus';
 import UploadWorkStatus from './pages/Upload/UploadWorkStatus';
+import UploadMaterialData from './pages/Upload/UploadMaterialData';
+import MaterialWorkflowPage from './pages/MaterialWorkflowPage';
+
 
 const App = () => {
   return (
@@ -49,10 +52,11 @@ const App = () => {
                 <Route path="/coal-mining-links" element={<CoalMiningLinks />} />
                 <Route path="/events" element={<Event />} />
                  <Route path="/work-flow/:step" element={<WorkFlowDetail />} />
+                 <Route path="/material-workflow" element={<MaterialWorkflowPage />} />
                 <Route element={<ProtectedRoute />}>
                   <Route path="/upload" element={<UploadPage />} />
                   
-                
+                 <Route path="/upload-material-data" element={<UploadMaterialData />} />
                 <Route path="/upload-work-status" element={<UploadWorkStatus />} /> {/* NEW */}
 
                 </Route>
