@@ -4,9 +4,10 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon server.js",
-    "vercel-start": "node server.js"
+   
+   "start": "node server.js",
+  "dev": "nodemon server.js",
+  "vercel-start": "node server.js"
   },
   "author": "Tinku",
   "license": "ISC",
