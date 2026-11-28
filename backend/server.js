@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import db from './db.js';
 
 
 import authRoutes from './routes/auth.route.js';
@@ -26,9 +27,26 @@ app.use('/api/work-cases', workCaseRoutes);
 app.use('/api/material-pos', materialPoRoutes);
 app.use('/api/payment-statuses', paymentStatusRoutes);
 
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'OK' });
+
+app.get('/api/health', async (req, res) => {
+  try {
+    await db.raw('SELECT 1');
+
+    res.status(200).json({
+      status: 'OK',
+      database: 'Connected',
+      message: 'CMD_STORE API is running',
+    });
+  } catch (error) {
+    console.error('Database health check failed:', error.message);
+
+    res.status(503).json({
+      status: 'ERROR',
+      database: 'Disconnected',
+    });
+  }
 });
+
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

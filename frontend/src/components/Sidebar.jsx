@@ -62,8 +62,8 @@ const Sidebar = () => {
         <div className="flex items-center justify-center pt-6 pb-4 shrink-0">
           <div className="bg-white rounded-2xl px-4 py-3 shadow-[0_0_30px_rgba(59,130,246,0.4)] border-2 border-white/30">
             <img
-              src="https://companieslogo.com/img/orig/NTPC.NS-2417ca8e.png?t=1746002638"
-              alt="NML Logo"
+              src="./NTPC2.png"
+              alt="ntpc Logo"
               className="w-25 h-auto object-contain"
             />
           </div>

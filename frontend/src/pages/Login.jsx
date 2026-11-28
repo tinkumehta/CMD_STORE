@@ -37,9 +37,9 @@ const Login = () => {
 
             {/* NML LOGO */}
             <img
-              src="/nml_logo.png"
+              src="https://jobapply.in/nml2024/images/logon.png"
               alt="NML"
-              className="w-20 md:w-24 lg:w-[110px] h-auto object-contain"
+              className="w-20 md:w-24 lg:w-[120px] h-auto object-contain"
             />
 
             <h1 className="text-[#0a2561] font-bold text-center mt-10 text-[17px] leading-tight tracking-wide">

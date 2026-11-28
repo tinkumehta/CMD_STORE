@@ -1,22 +1,32 @@
+
 import db from '../db.js';
 
 const User = {
-  // Find user by username
   findByUsername: async (username) => {
-    return await db('users').where({ username }).first();
+    return await db('users')
+      .whereRaw('LOWER(username) = LOWER(?)', [
+        String(username).trim(),
+      ])
+      .first();
   },
 
-  // Create a new user
   create: async (username, passwordHash, role = 'user') => {
-    const [user] = await db('users')
-      .insert({ username, password_hash: passwordHash, role })
-      .returning(['id', 'username', 'role']);
-    return user;
+    const [insertId] = await db('users').insert({
+      username: String(username).trim(),
+      password_hash: passwordHash,
+      role,
+    });
+
+    return await db('users')
+      .select('id', 'username', 'role')
+      .where({ id: insertId })
+      .first();
   },
 
-  // Find by ID
   findById: async (id) => {
-    return await db('users').where({ id }).first();
+    return await db('users')
+      .where({ id })
+      .first();
   },
 };
 
