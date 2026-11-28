@@ -27,4 +27,5 @@ const db = knex({
   acquireConnectionTimeout: 20000,
 });
 
+
 export default db;
